@@ -3,7 +3,7 @@ using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Persistence;
 using SharedMessages;
 
-namespace Cart;
+namespace CartHost;
 
 public class CartActor : ReceivePersistentActor
 {
@@ -18,54 +18,57 @@ public class CartActor : ReceivePersistentActor
         
         Recover<ProductAdded>(product =>
         {
-            Console.WriteLine($"Recover: Product {product.ProductName} added to cart {Id}");
-            HandleProductAdded(product);
+            Console.WriteLine($"Recover Cart {Id}: Product {product.ProductName} added to cart {Id}");
+            Apply(product);
             SubscribeToProductUpdates(product.ProductName);
         });
         Recover<ProductPriceUpdated>(price =>
         {
-            Console.WriteLine($"Recover: Product {price.ProductName} price updated to {price.NewPrice}");
-            HandlePriceUpdated(price);
+            Console.WriteLine($"Recover Cart {Id}: Product {price.ProductName} price updated to {price.NewPrice}");
+            Apply(price);
         });
         
-        Command<AddProduct>(addProduct =>
-        {
-            Console.WriteLine($"Adding product {addProduct.Name} to cart {Id}");
-            Self.Tell(new ProductAdded(addProduct.Name, addProduct.Price));
-        });
-        
-        Command<ProductAdded>(productAdded =>
-        {
-            Persist(productAdded, p =>
-            {
-                HandleProductAdded(p);
-                SubscribeToProductUpdates(p.ProductName);
-                Console.WriteLine($"Product {p.ProductName} added to cart {Id}");
-            });
-        });
-        
-        Command<ProductPriceUpdated>(priceUpdated =>
-        {
-            Persist(priceUpdated, price =>
-            {
-                HandlePriceUpdated(price);
-                Console.WriteLine($"Cart {Id}: Product {price.ProductName} price updated to {price.NewPrice}");
-            });
-        });
 
         Command<HasProducts>(_ =>
         {
             Console.WriteLine($"Cart {Id}: Checking if cart has products");
             Sender.Tell(_hasProducts ? new HasProducts.Yes() : new HasProducts.No());
         });
-        
-        Command<CartDetails>(q =>
+        Command<GetCartDetails>(_ =>
         {
             Console.WriteLine($"Cart {Id}: Querying cart details");
             Sender.Tell(new CartDetails {
-                CartId = q.CartId,
+                CartId = Id,
                 LineItems = _items.ToArray(),
                 TotalPrice = TotalPrice
+            });
+        });
+        
+        Command<AddProduct>(addProduct =>
+        {
+            Console.WriteLine($"Cart {Id}: Adding product {addProduct.Name} to cart {Id}");
+            Self.Tell(new ProductAdded(addProduct.Name, addProduct.Price));
+        });
+        Command<ProductAdded>(productAdded =>
+        {
+            Persist(productAdded, p =>
+            {
+                var oldHasProducts = _hasProducts;
+                Apply(p);
+                SubscribeToProductUpdates(p.ProductName);
+                if (!oldHasProducts)
+                {
+                    NotifyProductAddedToCart();
+                }
+                Console.WriteLine($"Cart {Id}: Product {p.ProductName} added to cart {Id}");
+            });
+        });
+        Command<ProductPriceUpdated>(priceUpdated =>
+        {
+            Persist(priceUpdated, price =>
+            {
+                Apply(price);
+                Console.WriteLine($"Cart {Id}: Product {price.ProductName} price updated to {price.NewPrice}");
             });
         });
     }
@@ -73,9 +76,14 @@ public class CartActor : ReceivePersistentActor
     public int Id { get; }
     public override string PersistenceId => $"cart_{Id}";
 
-    private void HandleProductAdded(ProductAdded update)
+    private void NotifyProductAddedToCart()
     {
-        var existing = _items.Find(i => i.ProductName == update.ProductName);
+        Mediator.Tell(new Publish(Topics.CartCreated(), new ProductsAddedToCart(Id)));
+    }
+
+    private void Apply(ProductAdded evt)
+    {
+        var existing = _items.Find(i => i.ProductName == evt.ProductName);
         if (existing != null)
         {
             existing.Quantity++;
@@ -84,20 +92,20 @@ public class CartActor : ReceivePersistentActor
         {
             _items.Add(new LineItem
             {
-                ProductName = update.ProductName,
-                Price = update.ProductPrice,
+                ProductName = evt.ProductName,
+                Price = evt.ProductPrice,
                 Quantity = 1
             });
         }
         _hasProducts = true;
     }
 
-    private void HandlePriceUpdated(ProductPriceUpdated update)
+    private void Apply(ProductPriceUpdated evt)
     {
-        var existing = _items.Find(i => i.ProductName == update.ProductName);
+        var existing = _items.Find(i => i.ProductName == evt.ProductName);
         if (existing != null)
         {
-            existing.Price = update.NewPrice;
+            existing.Price = evt.NewPrice;
         }
         // well, even though this is not normal, ignore the update...
     }

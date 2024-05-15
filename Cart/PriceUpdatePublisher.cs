@@ -10,7 +10,7 @@ public class PriceUpdatePublisher: ReceiveActor
 
     public PriceUpdatePublisher()
     {
-        Receive<PriceUpdated>(update =>
+        Receive<ProductPriceUpdated>(update =>
         {
             Console.WriteLine($"Publishing update for {update.ProductName} with new price {update.NewPrice}");
             _mediator.Tell(new Publish(Topics.ProductPriceUpdated(update.ProductName), update));

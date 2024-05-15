@@ -18,7 +18,7 @@ app.AddCommand(
     using var system = CreateActorSystem();
     Console.WriteLine($"Managing cart {cartId}");
     var cart = system.ActorSelection("akka.tcp://ClusterSystem@localhost:8081/user/cartActor-" + cartId);
-    var cartDetails = await cart.Ask<CartDetails>(CartDetails.Query(cartId));
+    var cartDetails = await cart.Ask<CartDetails>(GetCartDetails.Instance);
     Console.WriteLine("Cart details:");
     Console.WriteLine($"Cart ID: {cartDetails.CartId}");
     Console.WriteLine($"Total price: {cartDetails.TotalPrice}");
@@ -36,7 +36,7 @@ app.AddCommand(
         using var system = CreateActorSystem();
         Console.WriteLine($"Updating price of product {productName} to {price}");
         var publisher = system.ActorSelection("akka.tcp://ClusterSystem@localhost:8081/user/publisher");
-        publisher.Tell(new PriceUpdated(productName, price));
+        publisher.Tell(new ProductPriceUpdated(productName, price));
     }
 );
 
