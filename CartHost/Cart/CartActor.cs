@@ -3,7 +3,7 @@ using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Persistence;
 using SharedMessages;
 
-namespace CartHost;
+namespace CartHost.Cart;
 
 public class CartActor : ReceivePersistentActor
 {

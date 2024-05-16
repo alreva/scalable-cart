@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using Akka.Actor;
 using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Persistence;
+using CartHost.Cart;
 using SharedMessages;
 
 namespace CartHost.CartManager;
