@@ -11,7 +11,7 @@ public class TestScenario
     };
 
     [Fact]
-    public async Task Test1()
+    public async Task RunCartOperations()
     {
         await CallGetCart(1);
         await CallGetCart(2);
@@ -24,12 +24,13 @@ public class TestScenario
         await CallAddProduct(2, "product4", 44.44M);
         await CallAddProduct(3, "product2", 22.22M);
         await CallAddProduct(3, "product5", 55.55M);
-        
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
         await CallUpdateProductPrice("product2", 222.22M);
     }
     
     [Fact]
-    public async Task Test2()
+    public async Task RunPriceUpdate()
     {
         await CallUpdateProductPrice("product2", 222.22M);
     }
@@ -45,7 +46,7 @@ public class TestScenario
 
     private async Task CallUpdateProductPrice(string productName, decimal price)
     {
-        await _http.PostAsJsonAsync<object>($"/product/{productName}", new
+        await _http.PutAsJsonAsync<object>($"/product/{productName}", new
         {
             Price = price
         });
