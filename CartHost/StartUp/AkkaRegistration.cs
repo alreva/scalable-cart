@@ -21,6 +21,8 @@ public static class AkkaRegistration
                     autoInitialize: true)
                 .WithActors((system, registry) =>
                 {
+                    #region Demo Actor DSL
+
                     var echo = system.ActorOf(dsl =>
                     {
                         dsl.ReceiveAny((o, context) =>
@@ -28,9 +30,12 @@ public static class AkkaRegistration
                             context.Sender.Tell("Echo: " + o);
                         });
                     });
-                    registry.TryRegister<CartManagerActor>(system.ActorOf<CartManagerActor>(), true);
-                    registry.TryRegister<ProductManagerActor>(system.ActorOf<ProductManagerActor>(), true);
                     registry.Register<IEcho>(echo);
+
+                    #endregion
+
+                    registry.Register<CartManagerActor>(system.ActorOf<CartManagerActor>());
+                    registry.Register<ProductManagerActor>(system.ActorOf<ProductManagerActor>());
                 });
         });
     }

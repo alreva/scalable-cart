@@ -10,12 +10,6 @@ public static class CartHttpService
 {
     public static void MapCart(this WebApplication app)
     {
-        app.MapGet("/", async (HttpContext ctx, IRequiredActor<IEcho> echo) =>
-        {
-            var echoMessage = await echo.ActorRef.Ask(ctx.TraceIdentifier, ctx.RequestAborted);
-            return Results.Ok(echoMessage);
-        });
-
         app.MapGet("/cart/{id:int}", async (HttpContext ctx, int id, IRequiredActor<CartManagerActor> mgr) =>
             {
                 var cart = await mgr.GetCart(id);
