@@ -6,10 +6,39 @@ namespace CartHost.Tests;
 
 public class TestScenario
 {
+    private readonly Random R = Random.Shared;
+    
     private readonly HttpClient _http = new()
     {
         BaseAddress = new Uri("http://localhost:5254")
     };
+
+    [Fact]
+    public async Task VolumeSmokeCheck()
+    {
+        foreach (var i in Enumerable.Range(1, 5000))
+        {
+            await GetCart(i);
+            foreach (var _ in Enumerable.Range(1, R.Next(1, 10)))
+            {
+                var productName = "product" + R.Next(1, 100);
+                await CallAddProduct(i, productName, R.Next(1, 1000));
+            }
+        }
+
+        int referenceCartId = -1;
+        foreach (var i in Enumerable.Range(1, R.Next(1, 20)))
+        {
+            await CallAddProduct(i, "product2", 22.22M);
+            referenceCartId = i;
+        }
+        await Task.Delay(TimeSpan.FromSeconds(1));
+        
+        await CallUpdateProductPrice("product2", 222.22M);
+        await VerifyCartHasProductPrice(referenceCartId, "product2", 222.22M);
+        await CallUpdateProductPrice("product2", 22.22M);
+        await VerifyCartHasProductPrice(referenceCartId, "product2", 22.22M);
+    }
 
     [Fact]
     public async Task E2EProductPriceUpdateSmokeCheck()
