@@ -32,7 +32,7 @@ builder.Services.AddAkka("ActorSystem", akka =>
             });
             registry.TryRegister<CartManagerActor>(system.ActorOf<CartManagerActor>(), true);
             registry.TryRegister<ProductManagerActor>(system.ActorOf<ProductManagerActor>(), true);
-            registry.Register<Echo>(echo);
+            registry.Register<IEcho>(echo);
         });
 });
 
@@ -44,7 +44,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/", async (HttpContext ctx, IRequiredActor<Echo> echo) =>
+app.MapGet("/", async (HttpContext ctx, IRequiredActor<IEcho> echo) =>
 {
     var echoMessage = await echo.ActorRef.Ask(ctx.TraceIdentifier, ctx.RequestAborted);
     return Results.Ok(echoMessage);
@@ -88,20 +88,3 @@ app.MapPut("/product/{productName}", async (
     .WithOpenApi();
 
 app.Run();
-
-class Echo
-{
-    
-}
-
-public static class SystemContext
-{
-    public static async Task<IActorRef> GetCart(this IRequiredActor<CartManagerActor> manager, int id)
-    {
-        return await manager.ActorRef.Ask<IActorRef>(new GetCart(id));
-    }
-}
-
-public record AddProductToCartRequest(string ProductName, decimal Price);
-
-public record ProductUpdateRequest(decimal Price);

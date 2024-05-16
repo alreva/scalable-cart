@@ -8,7 +8,7 @@ namespace CartHost;
 public class CartActor : ReceivePersistentActor
 {
     private static readonly IActorRef Mediator = DistributedPubSub.Get(Context.System).Mediator;
-    bool _hasProducts = false;
+    private bool _hasProducts;
     private readonly List<LineItem> _items = new();
     private decimal TotalPrice => _items.Sum(i => i.Price * i.Quantity);
 
@@ -28,12 +28,6 @@ public class CartActor : ReceivePersistentActor
             Apply(price);
         });
         
-
-        Command<HasProducts>(_ =>
-        {
-            Console.WriteLine($"Cart {Id}: Checking if cart has products");
-            Sender.Tell(_hasProducts ? new HasProducts.Yes() : new HasProducts.No());
-        });
         Command<GetCartDetails>(_ =>
         {
             Console.WriteLine($"Cart {Id}: Querying cart details");
@@ -74,6 +68,7 @@ public class CartActor : ReceivePersistentActor
     }
 
     public int Id { get; }
+    
     public override string PersistenceId => $"cart_{Id}";
 
     private void NotifyProductAddedToCart()

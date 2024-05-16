@@ -4,7 +4,7 @@ using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Cluster.Tools.Singleton;
 using Akka.Configuration;
 using Cocona;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using SharedMessages;
 
 Console.WriteLine("Hello, this is the CLI for your domain commands speaking!");
@@ -17,7 +17,8 @@ app.AddCommand(
 {
     using var system = CreateActorSystem();
     Console.WriteLine($"Managing cart {cartId}");
-    var cart = system.ActorSelection("akka.tcp://ClusterSystem@localhost:8081/user/cartActor-" + cartId);
+    var cart = system.ActorSelection(
+        builder.Configuration.GetConnectionString("AkkaCartActorPathPrefix") + cartId);
     var cartDetails = await cart.Ask<CartDetails>(GetCartDetails.Instance);
     Console.WriteLine("Cart details:");
     Console.WriteLine($"Cart ID: {cartDetails.CartId}");
@@ -35,7 +36,7 @@ app.AddCommand(
     {
         using var system = CreateActorSystem();
         Console.WriteLine($"Updating price of product {productName} to {price}");
-        var publisher = system.ActorSelection("akka.tcp://ClusterSystem@localhost:8081/user/publisher");
+        var publisher = system.ActorSelection(builder.Configuration.GetConnectionString("AkkaPublisherPath"));
         publisher.Tell(new ProductPriceUpdated(productName, price));
     }
 );

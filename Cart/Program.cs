@@ -3,11 +3,9 @@
 using Akka.Actor;
 using Akka.Configuration;
 using Cart;
-using SharedMessages;
 using Console = Cart.Console;
 
 Console.WriteLine("Hello from Cart!");
-Random r = new Random(123);
 
 const string akkaPersistenceConnectionString = "Host=localhost;Port=5432;Database=akka-db;Username=akka;Password=1qaz@WSX;";
 
@@ -74,18 +72,6 @@ using (var system = ActorSystem.Create("ClusterSystem", config))
         var cart = system.ActorOf(
             Props.Create(() => new CartActor(id)),
             "cartActor-" + id);
-        var response = await cart.Ask<HasProducts>(new HasProducts());
-        switch (response)
-        {
-            case HasProducts.Yes _:
-                Console.WriteLine($"Cart {id} has products");
-                break;
-            case HasProducts.No _:
-                Console.WriteLine($"Cart {id} has no products. Adding...");
-                cart.Tell(new AddProduct($"product{r.Next(1, 100)}", 10.0m));
-                cart.Tell(new AddProduct($"product{r.Next(1, 100)}", 20.0m));
-                break;
-        }
         actors.Add(cart);
     }
     

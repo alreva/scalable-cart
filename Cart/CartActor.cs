@@ -8,7 +8,6 @@ namespace Cart;
 public class CartActor : ReceivePersistentActor
 {
     private static readonly IActorRef Mediator = DistributedPubSub.Get(Context.System).Mediator;
-    bool _hasProducts = false;
     private readonly List<LineItem> _items = new();
     private decimal TotalPrice => _items.Sum(i => i.Price * i.Quantity);
 
@@ -52,12 +51,6 @@ public class CartActor : ReceivePersistentActor
                 Console.WriteLine($"Cart {Id}: Product {price.ProductName} price updated to {price.NewPrice}");
             });
         });
-
-        Command<HasProducts>(_ =>
-        {
-            Console.WriteLine($"Cart {Id}: Checking if cart has products");
-            Sender.Tell(_hasProducts ? new HasProducts.Yes() : new HasProducts.No());
-        });
         
         Command<CartDetails>(q =>
         {
@@ -89,7 +82,6 @@ public class CartActor : ReceivePersistentActor
                 Quantity = 1
             });
         }
-        _hasProducts = true;
     }
 
     private void HandlePriceUpdated(ProductPriceUpdated update)
