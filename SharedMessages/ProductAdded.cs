@@ -1,14 +1,5 @@
 namespace SharedMessages;
 
-public class ProductAdded
-{
-    public ProductAdded(string productName, decimal productPrice)
-    {
-        ProductName = productName;
-        ProductPrice = productPrice;
-    }
+public record ProductAdded(string ProductName, decimal ProductPrice);
+public record ProductAddedToCart(int CartId, string ProductName, decimal ProductPrice);
 
-    public string ProductName { get; set; }
-    public decimal ProductPrice { get; set; }
-
-}

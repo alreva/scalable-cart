@@ -1,14 +1,15 @@
 using Akka.Actor;
 using Akka.Cluster.Tools.PublishSubscribe;
+using Akka.Event;
 using Akka.Persistence;
 using SharedMessages;
 
 namespace CartHost.Cart;
 
-public class CartActor : ReceivePersistentActor
+public class CartActor : ReceivePersistentActor, ILogReceive
 {
-    private static readonly IActorRef Mediator = DistributedPubSub.Get(Context.System).Mediator;
-    private bool _hasProducts;
+    private static readonly ILoggingAdapter Logger = Context.GetLogger();
+    
     private readonly List<LineItem> _items = new();
     private decimal TotalPrice => _items.Sum(i => i.Price * i.Quantity);
 
@@ -16,21 +17,27 @@ public class CartActor : ReceivePersistentActor
     {
         Id = id;
         
-        Recover<ProductAdded>(product =>
+        Recover<ProductAdded>(evt =>
         {
-            Console.WriteLine($"Recover Cart {Id}: Product {product.ProductName} added to cart {Id}");
-            Apply(product);
-            SubscribeToProductUpdates(product.ProductName);
+            Logger.Info(
+                "Recover Cart {0}: Product {1} added to cart.",
+                Id,
+                evt.ProductName);
+            Apply(evt);
         });
-        Recover<ProductPriceUpdated>(price =>
+        Recover<ProductPriceUpdated>(evt =>
         {
-            Console.WriteLine($"Recover Cart {Id}: Product {price.ProductName} price updated to {price.NewPrice}");
-            Apply(price);
+            Logger.Info(
+                "Recover Cart {0}: Product {1} price updated to {2}.",
+                Id,
+                evt.ProductName,
+                evt.NewPrice);
+            Apply(evt);
         });
         
         Command<GetCartDetails>(_ =>
         {
-            Console.WriteLine($"Cart {Id}: Querying cart details");
+            Logger.Info("Cart {0}: Querying cart details", Id);
             Sender.Tell(new CartDetails {
                 CartId = Id,
                 LineItems = _items.ToArray(),
@@ -38,43 +45,39 @@ public class CartActor : ReceivePersistentActor
             });
         });
         
-        Command<AddProduct>(addProduct =>
-        {
-            Console.WriteLine($"Cart {Id}: Adding product {addProduct.Name} to cart {Id}");
-            Self.Tell(new ProductAdded(addProduct.Name, addProduct.Price));
+        Command<AddProduct>(cmd =>
+        { 
+            Logger.Info("Cart {0}: Adding product {1} to cart.", Id, cmd.Name);
+            Self.Tell(new ProductAdded(cmd.Name, cmd.Price));
         });
-        Command<ProductAdded>(productAdded =>
+        Command<UpdateProductPrice>(cmd =>
         {
-            Persist(productAdded, p =>
+            Logger.Info("Cart {0}: Updating product {1} price to {2}.", Id, cmd.ProductName, cmd.NewPrice);
+            Self.Tell(new ProductPriceUpdated(cmd.ProductName, cmd.NewPrice));
+        });
+        
+        Command<ProductAdded>(e =>
+        {
+            Persist(e, evt =>
             {
-                var oldHasProducts = _hasProducts;
-                Apply(p);
-                SubscribeToProductUpdates(p.ProductName);
-                if (!oldHasProducts)
-                {
-                    NotifyProductAddedToCart();
-                }
-                Console.WriteLine($"Cart {Id}: Product {p.ProductName} added to cart {Id}");
+                Apply(evt);
+                Logger.Info("Cart {0}: Product {1} added to cart.", Id, evt.ProductName);
+                Context.Parent.Tell(new ProductAddedToCart(Id, evt.ProductName, evt.ProductPrice));
             });
         });
-        Command<ProductPriceUpdated>(priceUpdated =>
+        Command<ProductPriceUpdated>(e =>
         {
-            Persist(priceUpdated, price =>
+            Persist(e, evt =>
             {
-                Apply(price);
-                Console.WriteLine($"Cart {Id}: Product {price.ProductName} price updated to {price.NewPrice}");
+                Apply(evt);
+                Logger.Info("Cart {0}: Product {1} price updated to {2}", Id, evt.ProductName, evt.NewPrice);
             });
         });
     }
 
-    public int Id { get; }
+    private int Id { get; }
     
     public override string PersistenceId => $"cart_{Id}";
-
-    private void NotifyProductAddedToCart()
-    {
-        Mediator.Tell(new Publish(Topics.CartCreated(), new ProductsAddedToCart(Id)));
-    }
 
     private void Apply(ProductAdded evt)
     {
@@ -92,7 +95,6 @@ public class CartActor : ReceivePersistentActor
                 Quantity = 1
             });
         }
-        _hasProducts = true;
     }
 
     private void Apply(ProductPriceUpdated evt)
@@ -103,10 +105,5 @@ public class CartActor : ReceivePersistentActor
             existing.Price = evt.NewPrice;
         }
         // well, even though this is not normal, ignore the update...
-    }
-
-    private void SubscribeToProductUpdates(string productName)
-    {
-        Mediator.Tell(new Subscribe(Topics.ProductPriceUpdated(productName), Self));
     }
 }

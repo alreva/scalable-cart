@@ -54,12 +54,13 @@ public class TestScenario
         await CallAddProduct(2, "product4", 44.44M);
         await CallAddProduct(3, "product2", 22.22M);
         await CallAddProduct(3, "product5", 55.55M);
-        await Task.Delay(TimeSpan.FromSeconds(1));
 
         await CallUpdateProductPrice("product2", 222.22M);
+        await Task.Delay(TimeSpan.FromSeconds(1));
         await VerifyCartHasProductPrice(1, "product2", 222.22M);
 
         await CallUpdateProductPrice("product2", 22.22M);
+        await Task.Delay(TimeSpan.FromSeconds(1));
         await VerifyCartHasProductPrice(1, "product2", 22.22M);
     }
 

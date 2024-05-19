@@ -4,7 +4,7 @@ using SharedMessages;
 
 namespace CartHost.ProductManager;
 
-public class ProductManagerActor: ReceiveActor
+public class ProductManagerActor: ReceiveActor, ILogReceive
 {
     private static readonly IActorRef Mediator = DistributedPubSub.Get(Context.System).Mediator;
     
