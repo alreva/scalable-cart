@@ -1,24 +1,13 @@
-'use client';
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Table } from 'react-bootstrap';
-import { CartDetails, LineItem } from './cartDto';
+import { CartDetails, CartResponse, LineItem } from './cartDto';
 
-export default function Cart() {
+export default async function Cart() {
 
-  const [cart, setCart] = useState<CartDetails>();  
-
-  useEffect(() => {
-    const callApi = async () => {
-      const response = await fetch('/cart/api');
-      const data = await response.json() as CartDetails;
-      setCart(data);
-    };
-
-    callApi();
-  }, [cart?.cartId]);
-
-  if (!cart) { return (<></>) }
-
+  const res = await fetch('http://localhost:5254/cart/1');
+  const data = await res.json() as CartResponse;
+  console.log(data);
+  const cart = data.details;
   const { lineItems, totalPrice } = cart;
 
   return (
