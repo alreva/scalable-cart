@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@microsoft/signalr": "^8.0.0",
     "bootstrap": "^5.3.3",
     "next": "14.2.3",
     "react": "^18",

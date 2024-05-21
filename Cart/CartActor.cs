@@ -30,7 +30,7 @@ public class CartActor : ReceivePersistentActor
         Command<AddProduct>(addProduct =>
         {
             Console.WriteLine($"Adding product {addProduct.Name} to cart {Id}");
-            Self.Tell(new ProductAdded(addProduct.Name, addProduct.Price));
+            Self.Tell(new ProductAdded(addProduct.Name, addProduct.Price, Get));
         });
         
         Command<ProductAdded>(productAdded =>
@@ -55,12 +55,17 @@ public class CartActor : ReceivePersistentActor
         Command<CartDetails>(q =>
         {
             Console.WriteLine($"Cart {Id}: Querying cart details");
-            Sender.Tell(new CartDetails {
-                CartId = q.CartId,
-                LineItems = _items.ToArray(),
-                TotalPrice = TotalPrice
-            });
+            Sender.Tell(GetDetails(q));
         });
+    }
+
+    private CartDetails GetDetails(CartDetails q)
+    {
+        return new CartDetails {
+            CartId = q.CartId,
+            LineItems = _items.ToArray(),
+            TotalPrice = TotalPrice
+        };
     }
 
     public int Id { get; }

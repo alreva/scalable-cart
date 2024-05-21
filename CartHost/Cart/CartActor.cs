@@ -1,5 +1,4 @@
 using Akka.Actor;
-using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Event;
 using Akka.Persistence;
 using SharedMessages;
@@ -17,7 +16,7 @@ public class CartActor : ReceivePersistentActor, ILogReceive
     {
         Id = id;
         
-        Recover<ProductAdded>(evt =>
+        Recover<CartMessages.E.ProductAdded>(evt =>
         {
             Logger.Info(
                 "Recover Cart {0}: Product {1} added to cart.",
@@ -25,61 +24,61 @@ public class CartActor : ReceivePersistentActor, ILogReceive
                 evt.ProductName);
             Apply(evt);
         });
-        Recover<ProductPriceUpdated>(evt =>
+        Recover<CartMessages.E.PriceUpdated>(evt =>
         {
             Logger.Info(
                 "Recover Cart {0}: Product {1} price updated to {2}.",
-                Id,
-                evt.ProductName,
-                evt.NewPrice);
+                Id, evt.ProductName, evt.NewPrice);
             Apply(evt);
         });
         
-        Command<GetCartDetails>(_ =>
+        Command<CartMessages.Q.GetCartDetails>(_ =>
         {
             Logger.Info("Cart {0}: Querying cart details", Id);
-            Sender.Tell(new CartDetails {
-                CartId = Id,
-                LineItems = _items.ToArray(),
-                TotalPrice = TotalPrice
-            });
+            Sender.Tell(BuildDetails());
         });
         
         Command<AddProduct>(cmd =>
         { 
             Logger.Info("Cart {0}: Adding product {1} to cart.", Id, cmd.Name);
-            Self.Tell(new ProductAdded(cmd.Name, cmd.Price));
+            Self.Tell(new CartMessages.E.ProductAdded(cmd.Name, cmd.Price));
         });
         Command<UpdateProductPrice>(cmd =>
         {
             Logger.Info("Cart {0}: Updating product {1} price to {2}.", Id, cmd.ProductName, cmd.NewPrice);
-            Self.Tell(new ProductPriceUpdated(cmd.ProductName, cmd.NewPrice));
+            Self.Tell(new CartMessages.E.PriceUpdated(cmd.ProductName, cmd.NewPrice));
         });
         
-        Command<ProductAdded>(e =>
+        Command<CartMessages.E.ProductAdded>(e =>
         {
             Persist(e, evt =>
             {
                 Apply(evt);
                 Logger.Info("Cart {0}: Product {1} added to cart.", Id, evt.ProductName);
-                Context.Parent.Tell(new ProductAddedToCart(Id, evt.ProductName, evt.ProductPrice));
+                Context.Parent.Tell(new IntegrationMessages.CartChanged(Id, BuildDetails()));
             });
         });
-        Command<ProductPriceUpdated>(e =>
+        Command<CartMessages.E.PriceUpdated>(e =>
         {
             Persist(e, evt =>
             {
                 Apply(evt);
                 Logger.Info("Cart {0}: Product {1} price updated to {2}", Id, evt.ProductName, evt.NewPrice);
+                Context.Parent.Tell(new IntegrationMessages.CartChanged(Id, BuildDetails()));
             });
         });
+    }
+
+    private CartMessages.CartDetails BuildDetails()
+    {
+        return new CartMessages.CartDetails(Id, _items.ToArray(), TotalPrice);
     }
 
     private int Id { get; }
     
     public override string PersistenceId => $"cart_{Id}";
 
-    private void Apply(ProductAdded evt)
+    private void Apply(CartMessages.E.ProductAdded evt)
     {
         var existing = _items.Find(i => i.ProductName == evt.ProductName);
         if (existing != null)
@@ -97,7 +96,7 @@ public class CartActor : ReceivePersistentActor, ILogReceive
         }
     }
 
-    private void Apply(ProductPriceUpdated evt)
+    private void Apply(CartMessages.E.PriceUpdated evt)
     {
         var existing = _items.Find(i => i.ProductName == evt.ProductName);
         if (existing != null)

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Table } from 'react-bootstrap';
-import { CartDetails, CartResponse, LineItem } from './cartDto';
+import { CartDetails, CartResponse, LineItem as LineItemModel } from './cartDto';
+import CartMessages from './cartChanges';
 
 export default async function Cart() {
 
@@ -33,11 +34,12 @@ export default async function Cart() {
         </Table>
       )}
       {lineItems.length === 0 && <p>No items in the cart</p>}
+      <CartMessages />
     </>
   );
 }
 
-const LineItem: React.FC<LineItem> = ({productName, price, quantity}) => {
+const LineItem: React.FC<LineItemModel> = ({productName, price, quantity}) => {
   return (
     <tr>
       <td>{productName}</td>

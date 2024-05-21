@@ -13,7 +13,7 @@ public static class CartHttpService
         app.MapGet("/cart/{id:int}", async (HttpContext ctx, int id, IRequiredActor<CartManagerActor> mgr) =>
             {
                 var cart = await mgr.GetCart(id);
-                var cartDetails = await cart.Ask<CartDetails>(GetCartDetails.Instance);
+                var cartDetails = await cart.Ask<CartMessages.CartDetails>(CartMessages.Q.GetCartDetails.Instance);
                 return Results.Ok(new
                 {
                     Path = cart.Path.ToString(),

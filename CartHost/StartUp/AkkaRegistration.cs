@@ -3,8 +3,10 @@ using Akka.Actor.Dsl;
 using Akka.Cluster.Hosting;
 using Akka.Hosting;
 using Akka.Persistence.PostgreSql.Hosting;
+using CartHost.Cart;
 using CartHost.CartManager;
 using CartHost.ProductManager;
+using Microsoft.AspNetCore.SignalR;
 using LogLevel = Akka.Event.LogLevel;
 
 namespace CartHost.StartUp;
@@ -58,14 +60,10 @@ public static class AkkaRegistration
 
                     #endregion
 
+                    registry.Register<CartChangesNotificationActor>(system.ActorOf<CartChangesNotificationActor>());
                     registry.Register<CartManagerActor>(system.ActorOf<CartManagerActor>("cart-manager"));
                     registry.Register<ProductManagerActor>(system.ActorOf<ProductManagerActor>("product-manager"));
                 });
         });
     }
-}
-
-public class CartHostConfiguration
-{
-    public bool LogAkkaDebugMessages { get; set; }
 }

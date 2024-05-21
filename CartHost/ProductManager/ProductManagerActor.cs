@@ -14,7 +14,7 @@ public class ProductManagerActor: ReceiveActor, ILogReceive
         {
             Mediator.Tell(new Publish(
                 Topics.ProductPriceUpdated(cmd.ProductName),
-                new ProductPriceUpdated(cmd.ProductName, cmd.NewPrice)));
+                new IntegrationMessages.ProductPriceUpdated(cmd.ProductName, cmd.NewPrice)));
         });
     }
 }
