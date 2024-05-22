@@ -19,12 +19,12 @@ public class CartChangesNotificationActor : ReceiveActor
     {
         Mediator.Tell(new Subscribe(Topics.CartChanged(), Self));
 
-        Receive<ClientCartConnected>(Apply);
-        Receive<ClientCartDisconnected>(Apply);
-        Receive<IntegrationMessages.CartChanged>(Apply);
+        Receive<CartChangesMessages.ClientCartConnected>(Apply);
+        Receive<CartChangesMessages.ClientCartDisconnected>(Apply);
+        Receive<IntegrationMessages.E.CartChanged>(Apply);
     }
 
-    private void Apply(ClientCartConnected evt)
+    private void Apply(CartChangesMessages.ClientCartConnected evt)
     {
         Logger.Info("CartChangesNotificationActor: Client {0} connected cart {1}", evt.ConnectionId, evt.CartId);
         var cartId = evt.CartId;
@@ -37,7 +37,7 @@ public class CartChangesNotificationActor : ReceiveActor
         connectionCarts.Add(cartId);
     }
 
-    private void Apply(ClientCartDisconnected evt)
+    private void Apply(CartChangesMessages.ClientCartDisconnected evt)
     {
         Logger.Info("CartChangesNotificationActor: Client {0} disconnected", evt.ConnectionId);
         var connectionId = evt.ConnectionId;
@@ -56,7 +56,7 @@ public class CartChangesNotificationActor : ReceiveActor
         _connectionCarts.TryRemove(connectionId, out var _);
     }
 
-    private async void Apply(IntegrationMessages.CartChanged evt)
+    private async void Apply(IntegrationMessages.E.CartChanged evt)
     {
         Logger.Info("CartChangesNotificationActor: Cart {0} changed", evt.CartId);
         var cartId = evt.CartId;
@@ -69,6 +69,6 @@ public class CartChangesNotificationActor : ReceiveActor
         Logger.Info("CartChangesNotificationActor: Sending message to {0} connections for cart {1}", connectionIds.Count, cartId);
         await CartHub.Clients
             .Clients(connectionIds)
-            .SendAsync("ReceiveMessage", evt);
+            .SendAsync("ReceiveMessage", evt.Details);
     }
 }

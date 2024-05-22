@@ -1,3 +1,4 @@
+using CartHost;
 using CartHost.Cart;
 using CartHost.ProductManager;
 using CartHost.StartUp;

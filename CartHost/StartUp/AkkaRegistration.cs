@@ -4,7 +4,6 @@ using Akka.Cluster.Hosting;
 using Akka.Hosting;
 using Akka.Persistence.PostgreSql.Hosting;
 using CartHost.Cart;
-using CartHost.CartManager;
 using CartHost.ProductManager;
 using Microsoft.AspNetCore.SignalR;
 using LogLevel = Akka.Event.LogLevel;

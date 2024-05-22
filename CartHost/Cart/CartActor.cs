@@ -9,7 +9,7 @@ public class CartActor : ReceivePersistentActor, ILogReceive
 {
     private static readonly ILoggingAdapter Logger = Context.GetLogger();
     
-    private readonly List<LineItem> _items = new();
+    private readonly List<CartMessages.LineItem> _items = new();
     private decimal TotalPrice => _items.Sum(i => i.Price * i.Quantity);
 
     public CartActor(int id)
@@ -38,12 +38,12 @@ public class CartActor : ReceivePersistentActor, ILogReceive
             Sender.Tell(BuildDetails());
         });
         
-        Command<AddProduct>(cmd =>
+        Command<CartMessages.C.AddProduct>(cmd =>
         { 
             Logger.Info("Cart {0}: Adding product {1} to cart.", Id, cmd.Name);
             Self.Tell(new CartMessages.E.ProductAdded(cmd.Name, cmd.Price));
         });
-        Command<UpdateProductPrice>(cmd =>
+        Command<CartMessages.C.UpdatePrice>(cmd =>
         {
             Logger.Info("Cart {0}: Updating product {1} price to {2}.", Id, cmd.ProductName, cmd.NewPrice);
             Self.Tell(new CartMessages.E.PriceUpdated(cmd.ProductName, cmd.NewPrice));
@@ -55,7 +55,7 @@ public class CartActor : ReceivePersistentActor, ILogReceive
             {
                 Apply(evt);
                 Logger.Info("Cart {0}: Product {1} added to cart.", Id, evt.ProductName);
-                Context.Parent.Tell(new IntegrationMessages.CartChanged(Id, BuildDetails()));
+                Context.Parent.Tell(new IntegrationMessages.E.CartChanged(Id, BuildDetails()));
             });
         });
         Command<CartMessages.E.PriceUpdated>(e =>
@@ -64,7 +64,7 @@ public class CartActor : ReceivePersistentActor, ILogReceive
             {
                 Apply(evt);
                 Logger.Info("Cart {0}: Product {1} price updated to {2}", Id, evt.ProductName, evt.NewPrice);
-                Context.Parent.Tell(new IntegrationMessages.CartChanged(Id, BuildDetails()));
+                Context.Parent.Tell(new IntegrationMessages.E.CartChanged(Id, BuildDetails()));
             });
         });
     }
@@ -87,12 +87,7 @@ public class CartActor : ReceivePersistentActor, ILogReceive
         }
         else
         {
-            _items.Add(new LineItem
-            {
-                ProductName = evt.ProductName,
-                Price = evt.ProductPrice,
-                Quantity = 1
-            });
+            _items.Add(new CartMessages.LineItem(evt.ProductName, evt.ProductPrice, 1));
         }
     }
 

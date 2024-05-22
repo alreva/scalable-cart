@@ -15,7 +15,7 @@ public static class ProductHttpService
                 [FromBody] ProductUpdateRequest req,
                 [FromServices] IRequiredActor<ProductManagerActor> mgr) =>
             {
-                mgr.ActorRef.Tell(new UpdateProductPrice(productName, req.Price));
+                mgr.ActorRef.Tell(new ProductManagerMessages.C.UpdateProductPrice(productName, req.Price));
             })
             .WithName("UpdateProduct")
             .WithOpenApi();

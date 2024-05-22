@@ -10,7 +10,7 @@ public class CartHub(IRequiredActor<CartChangesNotificationActor> mgr) : Hub
     public override async Task OnConnectedAsync()
     {
         var cartId = Convert.ToInt32(Context.GetHttpContext()!.Request.Query["cartId"]);
-        mgr.ActorRef.Tell(new ClientCartConnected(Context.ConnectionId, cartId), ActorRefs.Nobody);
+        mgr.ActorRef.Tell(new CartChangesMessages.ClientCartConnected(Context.ConnectionId, cartId), ActorRefs.Nobody);
         
         await Clients.Clients([Context.ConnectionId]).SendAsync("ReceiveMessage", new { Message="Hello from hub!" });
         
@@ -19,7 +19,7 @@ public class CartHub(IRequiredActor<CartChangesNotificationActor> mgr) : Hub
 
     public override Task OnDisconnectedAsync(Exception? exception)
     {
-        mgr.ActorRef.Tell(new ClientCartDisconnected(Context.ConnectionId), ActorRefs.Nobody);
+        mgr.ActorRef.Tell(new CartChangesMessages.ClientCartDisconnected(Context.ConnectionId), ActorRefs.Nobody);
         return base.OnDisconnectedAsync(exception);
     }
 }

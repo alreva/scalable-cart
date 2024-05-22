@@ -10,11 +10,11 @@ public class ProductManagerActor: ReceiveActor, ILogReceive
     
     public ProductManagerActor()
     {
-        Receive<UpdateProductPrice>(cmd =>
+        Receive<ProductManagerMessages.C.UpdateProductPrice>(cmd =>
         {
             Mediator.Tell(new Publish(
                 Topics.ProductPriceUpdated(cmd.ProductName),
-                new IntegrationMessages.ProductPriceUpdated(cmd.ProductName, cmd.NewPrice)));
+                new IntegrationMessages.E.ProductPriceUpdated(cmd.ProductName, cmd.NewPrice)));
         });
     }
 }

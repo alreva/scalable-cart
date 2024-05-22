@@ -1,54 +1,35 @@
 'use client'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import React from 'react';
-import Head from 'next/head';
-import { Container, Row, Col, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import "bootstrap/dist/css/bootstrap.min.css";
+import React from "react";
+import Head from "next/head";
+import { Container, Row, Col, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { UserProvider, useUser } from "./userContext";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const App: React.FC<LayoutProps> = ({ children }) => {
-    return (
-        <html>
-          <head>
-          </head>
-          <body>
-            <Layout>
-              {children}
-            </Layout>
-          </body>
-        </html>
-    );
-}
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
+    <UserProvider>
       <html data-bs-theme="dark">
         <head>
           <Head>
             <title>Cart UI</title>
-            <meta name="description" content="A Bootstrap layout with Next.js" />
+            <meta
+              name="description"
+              content="A Bootstrap layout with Next.js"
+            />
           </Head>
         </head>
         <body>
-          <header className='navbar navbar-expand-lg bd-navbar sticky-top'>
-            <Navbar className='container-xxl bd-gutter flex-wrap flex-lg-nowrap' expand="lg">
-              <Container fluid>
-                <Navbar.Brand href="/">Scalable Cart</Navbar.Brand>
-              </Container>
-              <Navbar.Collapse id="basic-navbar-nav">
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Nav className="me-auto">
-                    <Nav.Link href="/">Home</Nav.Link>
-                    <Nav.Link href="/catalog">Catalog</Nav.Link>
-                    <Nav.Link href="/cart">Cart</Nav.Link>
-                    <Nav.Link href="/about">About</Nav.Link>
-                </Nav>
-              </Navbar.Collapse>
-            </Navbar>
+          <header className="navbar navbar-expand-lg bd-navbar sticky-top">
+            <TopNavigation />
           </header>
-          <Container fluid className='container-xxl bd-gutter mt-3 my-md-4 bd-layout'>
+          <Container
+            fluid
+            className="container-xxl bd-gutter mt-3 my-md-4 bd-layout"
+          >
             <Row>
               <Col md={3}>
                 <Nav className="flex-column">
@@ -64,7 +45,37 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </Container>
         </body>
       </html>
+    </UserProvider>
   );
 };
+
+export function TopNavigation() {
+  const { user } =  useUser();
+  return (
+    <Navbar
+      className="container-xxl bd-gutter flex-wrap flex-lg-nowrap"
+      expand="lg"
+    >
+      <Container fluid>
+        <Navbar.Brand href="/">Scalable Cart</Navbar.Brand>
+      </Container>
+      <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Nav className="me-auto">
+          <Nav.Link href="/">Home</Nav.Link>
+          <Nav.Link href="/catalog">Catalog</Nav.Link>
+          <Nav.Link href="/cart">Cart</Nav.Link>
+          <Nav.Link href="/about">About</Nav.Link>
+          {user && (
+            <NavDropdown title={"User: " + user.name} id="basic-nav-dropdown">
+              <NavDropdown.Item href="/logout">Logout</NavDropdown.Item>
+            </NavDropdown>
+          )}
+          {!user && <Nav.Link href="/login">Login</Nav.Link>}
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
+  );
+}
 
 export default App;

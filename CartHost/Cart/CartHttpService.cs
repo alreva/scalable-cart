@@ -1,6 +1,5 @@
 using Akka.Actor;
 using Akka.Hosting;
-using CartHost.CartManager;
 using Microsoft.AspNetCore.Mvc;
 using SharedMessages;
 
@@ -10,7 +9,10 @@ public static class CartHttpService
 {
     public static void MapCart(this WebApplication app)
     {
-        app.MapGet("/cart/{id:int}", async (HttpContext ctx, int id, IRequiredActor<CartManagerActor> mgr) =>
+        app.MapGet("/cart/{id:int}", async (
+                HttpContext ctx,
+                int id,
+                IRequiredActor<CartManagerActor> mgr) =>
             {
                 var cart = await mgr.GetCart(id);
                 var cartDetails = await cart.Ask<CartMessages.CartDetails>(CartMessages.Q.GetCartDetails.Instance);
@@ -30,7 +32,7 @@ public static class CartHttpService
                 [FromServices] IRequiredActor<CartManagerActor> mgr) =>
             {
                 var cart = await mgr.GetCart(id);
-                cart.Tell(new AddProduct(req.ProductName, req.Price));
+                cart.Tell(new CartMessages.C.AddProduct(req.ProductName, req.Price));
                 return Results.Ok();
             })
             .WithName("AddProductToCart")
