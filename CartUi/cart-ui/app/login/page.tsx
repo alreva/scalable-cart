@@ -24,7 +24,7 @@ const LoginPage: React.FC = () => {
         console.log('User Name:', userName);
         console.log('User ID:', userId);
 
-        setUser({ name: userName, id: parseInt(userId) });
+        setUser({ name: userName, id: parseInt(userId), cartDetails: undefined});
         router.push('/');
     };
 

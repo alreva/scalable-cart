@@ -14,20 +14,19 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       fetch("/cart/api/?id=" + user.id.toString())
       .then((res) => res.json() as Promise<CartResponseDto>)
       .then((data) => {
-        console.log("XHR data: ", data);
         const userAndCart = { ...user, cartDetails: data.details };
-        console.log("User and cart: ", userAndCart);
         setUser(userAndCart);
+        console.log("User and cart details loaded: ", userAndCart);
         subscribeToNotifications(user.id, (details) => {
           console.log("Received updated cart details: ", details);
           setUser({ ...userAndCart, cartDetails: details });
         });
-      });
+    });
     }
-  }, []);
+  }, [user?.id]);
 
   return (
-    <UserContext.Provider value={{ user, setUser: saveUser }}>
+    <UserContext.Provider value={{ user, setUser: u => { setUser(u); saveUser(u); } }}>
       {children}
     </UserContext.Provider>
   );
@@ -44,7 +43,12 @@ export interface UserContextProps {
   setUser: (user: User | undefined) => void;
 }
 
-export const UserContext = createContext<UserContextProps | undefined>(undefined);
+export interface UserContextProps {
+  user: User | undefined;
+  setUser: (user: User | undefined) => void;
+}
+
+const UserContext = createContext<UserContextProps | undefined>(undefined);
 
 export const useUser = (): UserContextProps => {
   const context = useContext(UserContext);
@@ -54,7 +58,7 @@ export const useUser = (): UserContextProps => {
   return context;
 };
 
-export const saveUser = (user: User | undefined) => {
+const saveUser = (user: User | undefined) => {
   if (user) {
     localStorage.setItem('user', JSON.stringify(user));
   } else {
@@ -62,11 +66,11 @@ export const saveUser = (user: User | undefined) => {
   }
 }
 
-export function isCartDetails(arg: any): arg is CartDetailsDto {
+function isCartDetails(arg: any): arg is CartDetailsDto {
   return arg && arg.cartId && arg.lineItems && arg.totalPrice;
 }
 
-export const subscribeToNotifications = (
+const subscribeToNotifications = (
   cartId: number,
   detailsHandler: (details: CartDetailsDto) => void
 ) => {
