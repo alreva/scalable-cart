@@ -3,7 +3,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
 import Head from "next/head";
 import { Container, Row, Col, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { UserProvider, useUser } from "./userContext";
+import { UserProvider, useUser } from "./components/userContext";
+import MiniCart from "./components/minicart";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -66,12 +67,13 @@ export function TopNavigation() {
           <Nav.Link href="/catalog">Catalog</Nav.Link>
           <Nav.Link href="/cart">Cart</Nav.Link>
           <Nav.Link href="/about">About</Nav.Link>
-          {user && (
+          { user && (
             <NavDropdown title={"User: " + user.name} id="basic-nav-dropdown">
               <NavDropdown.Item href="/logout">Logout</NavDropdown.Item>
             </NavDropdown>
           )}
-          {!user && <Nav.Link href="/login">Login</Nav.Link>}
+          { user && <MiniCart cartDetails={user.cartDetails} /> }
+          { !user && <Nav.Link href="/login">Login</Nav.Link> }
         </Nav>
       </Navbar.Collapse>
     </Navbar>

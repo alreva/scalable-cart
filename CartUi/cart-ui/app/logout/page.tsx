@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
-import { useUser } from '../userContext';
+import { useUser } from '../components/userContext';
 import { useRouter } from 'next/navigation';
 
 const LogoutPage: React.FC = () => {

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { CartResponse } from "../cartDto";
+import { CartResponseDto } from "../../components/cartDto";
 
 
 export async function GET(request: Request) {
@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   console.log(res);
   console.log(res.headers);
 
-  const data = await res.json() as CartResponse;
+  const data = await res.json() as CartResponseDto;
   
   console.log(data);
 
