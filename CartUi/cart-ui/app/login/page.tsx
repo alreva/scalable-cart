@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useUser } from '../components/userContext';
 import { Form, Button } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
@@ -8,7 +8,14 @@ const LoginPage: React.FC = () => {
     const { user, setUser } = useUser();
     const [userName, setUserName] = useState(user?.name || '');
     const [userId, setUserId] = useState(user && user.id.toString() || '');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+      if (isAuthenticated) {
+        router.push("/");
+      }
+    }, [isAuthenticated]);
 
     const handleUserNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setUserName(event.target.value);
@@ -20,12 +27,8 @@ const LoginPage: React.FC = () => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // Perform login logic here
-        console.log('User Name:', userName);
-        console.log('User ID:', userId);
-
         setUser({ name: userName, id: parseInt(userId), cartDetails: undefined});
-        router.push('/');
+        setIsAuthenticated(true);
     };
 
     return (

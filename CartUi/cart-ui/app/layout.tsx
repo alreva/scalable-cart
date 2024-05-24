@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
 import Head from "next/head";
@@ -12,18 +12,15 @@ interface LayoutProps {
 
 const App: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <UserProvider>
-      <html data-bs-theme="dark">
-        <head>
-          <Head>
-            <title>Cart UI</title>
-            <meta
-              name="description"
-              content="A Bootstrap layout with Next.js"
-            />
-          </Head>
-        </head>
-        <body>
+    <html data-bs-theme="dark">
+      <head>
+        <Head>
+          <title>Cart UI</title>
+          <meta name="description" content="A Bootstrap layout with Next.js" />
+        </Head>
+      </head>
+      <body>
+        <UserProvider>
           <header className="navbar navbar-expand-lg bd-navbar sticky-top">
             <TopNavigation />
           </header>
@@ -44,14 +41,14 @@ const App: React.FC<LayoutProps> = ({ children }) => {
               </Col>
             </Row>
           </Container>
-        </body>
-      </html>
-    </UserProvider>
+        </UserProvider>
+      </body>
+    </html>
   );
 };
 
 export function TopNavigation() {
-  const { user } =  useUser();
+  const { user } = useUser();
   return (
     <Navbar
       className="container-xxl bd-gutter flex-wrap flex-lg-nowrap"
@@ -67,13 +64,13 @@ export function TopNavigation() {
           <Nav.Link href="/catalog">Catalog</Nav.Link>
           <Nav.Link href="/cart">Cart</Nav.Link>
           <Nav.Link href="/about">About</Nav.Link>
-          { user && (
+          {user && (
             <NavDropdown title={"User: " + user.name} id="basic-nav-dropdown">
               <NavDropdown.Item href="/logout">Logout</NavDropdown.Item>
             </NavDropdown>
           )}
-          { user && <MiniCart cartDetails={user.cartDetails} /> }
-          { !user && <Nav.Link href="/login">Login</Nav.Link> }
+          {user && <MiniCart cartDetails={user.cartDetails} />}
+          {!user && <Nav.Link href="/login">Login</Nav.Link>}
         </Nav>
       </Navbar.Collapse>
     </Navbar>
