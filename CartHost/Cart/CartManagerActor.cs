@@ -12,13 +12,14 @@ public class CartManagerActor : ReceivePersistentActor, ILogReceive
     private static readonly ILoggingAdapter Logger = Context.GetLogger();
     private readonly HashSet<string> _productSubscriptions = new();
     private readonly Dictionary<string, HashSet<int>> _subscribedCarts = new();
+    private int _evtCount = 0;
 
     public CartManagerActor()
     {
         Recover<IntegrationMessages.E.CartChanged>(evt =>
         {
             Logger.Info("Recover: cart {0} changed.", evt.CartId);
-            Apply(evt);
+            Apply(evt, true);
         });
         Recover<IntegrationMessages.E.ProductPriceUpdated>(evt =>
         {
@@ -32,21 +33,26 @@ public class CartManagerActor : ReceivePersistentActor, ILogReceive
             Sender.Tell(GetOrCreateCart(cartId));
         });
 
-        Command<IntegrationMessages.E.CartChanged>(evt =>
+        Command<IntegrationMessages.E.CartChanged>(e =>
         {
-            Persist(evt, Apply);
+            Persist(e, evt => Apply(evt, false));
+            MakeSnapshotIfNeeded();
         });
         Command<IntegrationMessages.E.ProductPriceUpdated>(e =>
         {
             Persist(e, evt =>  Apply(evt, false));
+            MakeSnapshotIfNeeded();
         });
     }
 
-    private void Apply(IntegrationMessages.E.CartChanged evt)
+    private void Apply(IntegrationMessages.E.CartChanged evt, bool recovering)
     {
         Logger.Info("CartManagerActor: cart {0} changed.", evt.CartId);
         SubscribeToProductUpdates(evt);
-        Mediator.Tell(new Publish(Topics.CartChanged(), evt));
+        if (!recovering)
+        {
+            Mediator.Tell(new Publish(Topics.CartChanged(), evt));
+        }
     }
     
     private void Apply(IntegrationMessages.E.ProductPriceUpdated evt, bool recovering)
@@ -113,5 +119,42 @@ public class CartManagerActor : ReceivePersistentActor, ILogReceive
         _subscribedCarts[productName] = [cartId];
     }
 
+    private void MakeSnapshotIfNeeded()
+    {
+        _evtCount++;
+        if (_evtCount % 500 == 0)
+        {
+            SaveSnapshot(State.GetState(this));
+        }
+    }
+
     public override string PersistenceId => "cart-manager";
+    
+    public class State
+    {
+        public required KeyValuePair<string, int[]>[] SubscribedCarts { get; init; }
+        
+        public static State GetState(CartManagerActor actor)
+        {
+            var subscriptions = actor
+                ._subscribedCarts.Select(
+                    kvp => new KeyValuePair<string, int[]>(kvp.Key, kvp.Value.ToArray()))
+                .ToArray();
+            return new State
+            {
+                SubscribedCarts = subscriptions
+            };
+        }
+
+        public void FillState(CartManagerActor actor)
+        {
+            actor._productSubscriptions.Clear();
+            actor._subscribedCarts.Clear();
+            foreach (var (productName, cartIds) in SubscribedCarts)
+            {
+                actor._productSubscriptions.Add(productName);
+                actor._subscribedCarts[productName] = [..cartIds];
+            }
+        }
+    }
 }

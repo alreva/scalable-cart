@@ -27,7 +27,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     const savedUser = loadUser();
     console.log("user ID: ", savedUser?.id);
     if (savedUser && savedUser.id > 0) {
-      fetch("/cart/api/?id=" + savedUser.id.toString())
+      fetch(`/api/cart/${savedUser.id}`)
         .then((res) => res.json() as Promise<CartResponseDto>)
         .then((data) => {
           subscribeToNotifications(savedUser.id, (details) => {

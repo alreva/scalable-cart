@@ -5,6 +5,7 @@ using Akka.Hosting;
 using Akka.Persistence.PostgreSql.Hosting;
 using CartHost.Cart;
 using CartHost.ProductManager;
+using CartHost.ProductManager.Catalog;
 using Microsoft.AspNetCore.SignalR;
 using LogLevel = Akka.Event.LogLevel;
 
@@ -16,6 +17,8 @@ public static class AkkaRegistration
     {
         var cartHostConfig = new CartHostConfiguration();
         config.Bind("CartHost", cartHostConfig);
+        var productConfig = new ProductManagerConfiguration();
+        config.Bind("ProductManager", productConfig);
         var logDebug = cartHostConfig.LogAkkaDebugMessages;
         services.AddAkka("ActorSystem", akka =>
         {
@@ -61,7 +64,9 @@ public static class AkkaRegistration
 
                     registry.Register<CartChangesNotificationActor>(system.ActorOf<CartChangesNotificationActor>());
                     registry.Register<CartManagerActor>(system.ActorOf<CartManagerActor>("cart-manager"));
-                    registry.Register<ProductManagerActor>(system.ActorOf<ProductManagerActor>("product-manager"));
+                    var catalogLoader = new CatalogLoader(productConfig.CatalogJsonPath);
+                    var productManagerActorProps = Props.Create(() => new ProductManagerActor(catalogLoader));
+                    registry.Register<ProductManagerActor>(system.ActorOf(productManagerActorProps, "product-manager"));
                 });
         });
     }

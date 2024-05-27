@@ -5,6 +5,7 @@ import Head from "next/head";
 import { Container, Row, Col, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { UserProvider, useUser } from "./components/userContext";
 import MiniCart from "./components/minicart";
+import TopCategories from "./components/topCategories";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -30,11 +31,7 @@ const App: React.FC<LayoutProps> = ({ children }) => {
           >
             <Row>
               <Col md={3}>
-                <Nav className="flex-column">
-                  <Nav.Link href="/">Dashboard</Nav.Link>
-                  <Nav.Link href="/profile">Profile</Nav.Link>
-                  <Nav.Link href="/settings">Settings</Nav.Link>
-                </Nav>
+                <TopCategories />
               </Col>
               <Col md={6}>
                 <main>{children}</main>
