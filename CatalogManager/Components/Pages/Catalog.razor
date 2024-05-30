@@ -11,7 +11,7 @@
         @foreach (var category in TopCategories.Categories)
         {
             <li>
-                <NavLink class="nav-link" href="@BuildLinkToCategory(category.Name)">
+                <NavLink class="nav-link" href="@Links.Category(category.Name)">
                     <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> @category.Name
                 </NavLink>
             </li>
@@ -28,10 +28,5 @@
     {
         await base.OnInitializedAsync();
         TopCategories = await Api.GetTopCategories();
-    }
-    
-    private string BuildLinkToCategory(string categoryName)
-    {
-        return $"Category/{WebUtility.UrlEncode(categoryName)}";
     }
 }

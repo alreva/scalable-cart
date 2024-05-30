@@ -1,12 +1,17 @@
 @page "/Product/{id:int}"
 @using SharedMessages
-<h3>Product</h3>
-
 @inject CatalogApiClient Api
+
+@if (Details?.Category != null)
+{
+    <NavLink class="nav-link px-0" href="@Links.Category(Details.Category)">
+        @Details.Category
+    </NavLink>
+}
 
 @if (Details != null)
 {
-    <h4><span class="badge bg-info">@Details.Id</span> @Details.Name</h4>
+    <h3><span class="badge bg-info">@Details.Id</span> @Details.Name</h3>
     <p>@Details.Description</p>
     <p>Price:</p>
     <input type="text" @bind="Details.Price" />
@@ -18,19 +23,18 @@ else
 }
 
 @code {
-    [Parameter]
-    public int Id { get; set; }
+    [Parameter] public int Id { get; set; }
 
     public ProductManagerMessages.CatalogItem? Details { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
+
         // Get the product details from the API:
         Details = await Api.GetProductDetails(Id);
     }
-    
+
     // Update the price of the product:
     private async Task UpdatePrice()
     {
@@ -39,4 +43,5 @@ else
             await Api.UpdateProductPrice(Id, Details.Price);
         }
     }
+
 }

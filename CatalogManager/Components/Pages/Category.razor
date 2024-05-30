@@ -1,15 +1,22 @@
 @page "/Category/{name}"
 @using SharedMessages
-<h3>Category</h3>
-
 @inject CatalogApiClient Api
+
+<NavLink class="nav-link px-0" href="@Links.Catalog()">
+    Catalog
+</NavLink>
+
+@if (CategoryProducts?.Category != null)
+{
+    <h3>@CategoryProducts.Category.Name</h3>
+}
+else
+{
+    <h3>Category</h3>
+}
 
 @if (CategoryProducts?.Products.Any() ?? false)
 {
-    <h4>Products</h4>
-
-    // Display the products in the category, with id, name, description, and price, and a link to product page:
-
     <div class="container">
         <div class="row">
             @foreach (var product in CategoryProducts.Products)
@@ -20,7 +27,7 @@
                             <h5 class="card-title"><span class="badge bg-info">@product.Id</span> @product.Name</h5>
                             <p class="card-text">@product.Description</p>
                             <p class="card-text">Price: @product.Price</p>
-                            <a href="@BuildLinkToProduct(product.Id)" class="btn btn-primary">View</a>
+                            <a href="@Links.Product(product.Id)" class="btn btn-primary">View</a>
                         </div>
                     </div>
                 </div>
