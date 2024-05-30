@@ -1,0 +1,42 @@
+@page "/Product/{id:int}"
+@using SharedMessages
+<h3>Product</h3>
+
+@inject CatalogApiClient Api
+
+@if (Details != null)
+{
+    <h4><span class="badge bg-info">@Details.Id</span> @Details.Name</h4>
+    <p>@Details.Description</p>
+    <p>Price:</p>
+    <input type="text" @bind="Details.Price" />
+    <button @onclick="UpdatePrice">Save</button>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    public ProductManagerMessages.CatalogItem? Details { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        
+        // Get the product details from the API:
+        Details = await Api.GetProductDetails(Id);
+    }
+    
+    // Update the price of the product:
+    private async Task UpdatePrice()
+    {
+        if (Details != null)
+        {
+            await Api.UpdateProductPrice(Id, Details.Price);
+        }
+    }
+}

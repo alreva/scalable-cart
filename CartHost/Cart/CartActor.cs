@@ -21,14 +21,14 @@ public class CartActor : ReceivePersistentActor, ILogReceive
             Logger.Info(
                 "Recover Cart {0}: Product {1} added to cart.",
                 Id,
-                evt.ProductName);
+                evt.ProductId);
             Apply(evt);
         });
         Recover<CartMessages.E.PriceUpdated>(evt =>
         {
             Logger.Info(
                 "Recover Cart {0}: Product {1} price updated to {2}.",
-                Id, evt.ProductName, evt.NewPrice);
+                Id, evt.ProductId, evt.NewPrice);
             Apply(evt);
         });
         
@@ -40,13 +40,13 @@ public class CartActor : ReceivePersistentActor, ILogReceive
         
         Command<CartMessages.C.AddProduct>(cmd =>
         { 
-            Logger.Info("Cart {0}: Adding product {1} to cart.", Id, cmd.Name);
-            Self.Tell(new CartMessages.E.ProductAdded(cmd.Name, cmd.Price));
+            Logger.Info("Cart {0}: Adding product {1} to cart.", Id, cmd.Id);
+            Self.Tell(new CartMessages.E.ProductAdded(cmd.Id, cmd.Price));
         });
         Command<CartMessages.C.UpdatePrice>(cmd =>
         {
-            Logger.Info("Cart {0}: Updating product {1} price to {2}.", Id, cmd.ProductName, cmd.NewPrice);
-            Self.Tell(new CartMessages.E.PriceUpdated(cmd.ProductName, cmd.NewPrice));
+            Logger.Info("Cart {0}: Updating product {1} price to {2}.", Id, cmd.ProductId, cmd.NewPrice);
+            Self.Tell(new CartMessages.E.PriceUpdated(cmd.ProductId, cmd.NewPrice));
         });
         
         Command<CartMessages.E.ProductAdded>(e =>
@@ -54,7 +54,7 @@ public class CartActor : ReceivePersistentActor, ILogReceive
             Persist(e, evt =>
             {
                 Apply(evt);
-                Logger.Info("Cart {0}: Product {1} added to cart.", Id, evt.ProductName);
+                Logger.Info("Cart {0}: Product {1} added to cart.", Id, evt.ProductId);
                 Context.Parent.Tell(new IntegrationMessages.E.CartChanged(Id, BuildDetails()));
             });
         });
@@ -63,7 +63,7 @@ public class CartActor : ReceivePersistentActor, ILogReceive
             Persist(e, evt =>
             {
                 Apply(evt);
-                Logger.Info("Cart {0}: Product {1} price updated to {2}", Id, evt.ProductName, evt.NewPrice);
+                Logger.Info("Cart {0}: Product {1} price updated to {2}", Id, evt.ProductId, evt.NewPrice);
                 Context.Parent.Tell(new IntegrationMessages.E.CartChanged(Id, BuildDetails()));
             });
         });
@@ -80,20 +80,20 @@ public class CartActor : ReceivePersistentActor, ILogReceive
 
     private void Apply(CartMessages.E.ProductAdded evt)
     {
-        var existing = _items.Find(i => i.ProductName == evt.ProductName);
+        var existing = _items.Find(i => i.ProductId == evt.ProductId);
         if (existing != null)
         {
             existing.Quantity++;
         }
         else
         {
-            _items.Add(new CartMessages.LineItem(evt.ProductName, evt.ProductPrice, 1));
+            _items.Add(new CartMessages.LineItem(evt.ProductId, evt.ProductPrice, 1));
         }
     }
 
     private void Apply(CartMessages.E.PriceUpdated evt)
     {
-        var existing = _items.Find(i => i.ProductName == evt.ProductName);
+        var existing = _items.Find(i => i.ProductId == evt.ProductId);
         if (existing != null)
         {
             existing.Price = evt.NewPrice;

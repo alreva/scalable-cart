@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartHost", "CartHost\CartHo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartHost.Tests", "CartHost.Tests\CartHost.Tests.csproj", "{B0C7344E-D3D7-426B-88FF-F1815ADC2A72}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogManager", "CatalogManager\CatalogManager.csproj", "{2639FE44-E6A8-4BD9-A3C7-D426AC5FEB19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{B0C7344E-D3D7-426B-88FF-F1815ADC2A72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0C7344E-D3D7-426B-88FF-F1815ADC2A72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0C7344E-D3D7-426B-88FF-F1815ADC2A72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2639FE44-E6A8-4BD9-A3C7-D426AC5FEB19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2639FE44-E6A8-4BD9-A3C7-D426AC5FEB19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2639FE44-E6A8-4BD9-A3C7-D426AC5FEB19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2639FE44-E6A8-4BD9-A3C7-D426AC5FEB19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

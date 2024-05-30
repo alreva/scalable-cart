@@ -1,3 +1,3 @@
 namespace CartHost.Cart;
 
-public record AddProductToCartRequest(string ProductName, decimal Price);
+public record AddProductToCartRequest(int ProductId, decimal Price);

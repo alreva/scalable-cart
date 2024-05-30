@@ -37,13 +37,26 @@ public static class ProductHttpService
                 return Results.Ok(products);
             });
         
-        app.MapPut("/product/{productName}", async (
+        app.MapGet("/product/{id:int}", async (
                 HttpContext ctx,
-                string productName,
+                int id,
+                [FromServices] IRequiredActor<ProductManagerActor> mgr) =>
+            {
+                var product = await mgr.ActorRef.Ask<ProductManagerMessages.CatalogItem>(
+                    new ProductManagerMessages.Q.GetProductDetails(id));
+                return Results.Ok(product);
+            })
+            .WithName("GetProduct")
+            .WithOpenApi();
+        
+        
+        app.MapPut("/product/{id:int}", async (
+                HttpContext ctx,
+                int id,
                 [FromBody] ProductUpdateRequest req,
                 [FromServices] IRequiredActor<ProductManagerActor> mgr) =>
             {
-                mgr.ActorRef.Tell(new ProductManagerMessages.C.UpdateProductPrice(productName, req.Price));
+                mgr.ActorRef.Tell(new ProductManagerMessages.C.UpdateProductPrice(id, req.Price));
             })
             .WithName("UpdateProduct")
             .WithOpenApi();

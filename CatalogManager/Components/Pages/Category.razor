@@ -1,0 +1,54 @@
+@page "/Category/{name}"
+@using SharedMessages
+<h3>Category</h3>
+
+@inject CatalogApiClient Api
+
+@if (CategoryProducts?.Products.Any() ?? false)
+{
+    <h4>Products</h4>
+
+    // Display the products in the category, with id, name, description, and price, and a link to product page:
+
+    <div class="container">
+        <div class="row">
+            @foreach (var product in CategoryProducts.Products)
+            {
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title"><span class="badge bg-info">@product.Id</span> @product.Name</h5>
+                            <p class="card-text">@product.Description</p>
+                            <p class="card-text">Price: @product.Price</p>
+                            <a href="@BuildLinkToProduct(product.Id)" class="btn btn-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <p>No products found in this category.</p>
+}
+
+@code {
+    [Parameter] public string Name { get; set; }
+
+    public ProductManagerMessages.CategoryProducts? CategoryProducts { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        CategoryProducts = await Api.GetCategoryProducts(Name);
+    }
+
+    // Build a link to the product page:
+    private string BuildLinkToProduct(int productId)
+    {
+        return $"Product/{productId}";
+    }
+
+}

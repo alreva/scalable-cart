@@ -16,14 +16,14 @@ export const CartDetails: React.FC<CartDetailsDto> = ({ lineItems, totalPrice })
         <Table striped>
           <thead>
             <tr>
-              <th>Product Name</th>
+              <th>#</th>
               <th className="text-end">Price</th>
               <th className="text-end">Quantity</th>
             </tr>
           </thead>
           <tbody>
             {lineItems.map((item) => (
-              <LineItem key={item.productName} {...item} />
+              <LineItem key={item.productId} {...item} />
             ))}
           </tbody>
           <tfoot className="table-group-divider">
@@ -40,13 +40,13 @@ export const CartDetails: React.FC<CartDetailsDto> = ({ lineItems, totalPrice })
 };
 
 export const LineItem: React.FC<LineItemDto> = ({
-  productName,
+  productId,
   price,
   quantity,
 }) => {
   return (
     <tr>
-      <td>{productName}</td>
+      <td>{productId}</td>
       <td align="right">{formatPrice(price)}</td>
       <td align="right">{quantity}</td>
     </tr>

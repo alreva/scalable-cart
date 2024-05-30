@@ -21,23 +21,28 @@ public class TestScenario
             await GetCart(i);
             foreach (var _ in Enumerable.Range(1, R.Next(1, 10)))
             {
-                var productName = "product" + R.Next(1, 100);
-                await CallAddProduct(i, productName, R.Next(1, 1000));
+                var productId = R.Next(1, 100);
+                await CallAddProduct(i, productId, R.Next(1, 1000));
             }
         }
 
         int referenceCartId = -1;
         foreach (var i in Enumerable.Range(1, R.Next(1, 20)))
         {
-            await CallAddProduct(i, "product2", 22.22M);
+            await CallAddProduct(i, 2, 22.22M);
             referenceCartId = i;
         }
-        await Task.Delay(TimeSpan.FromSeconds(1));
         
-        await CallUpdateProductPrice("product2", 222.22M);
-        await VerifyCartHasProductPrice(referenceCartId, "product2", 222.22M);
-        await CallUpdateProductPrice("product2", 22.22M);
-        await VerifyCartHasProductPrice(referenceCartId, "product2", 22.22M);
+        await CallUpdateProductPrice(2, 222.22M);
+        await Task.Delay(TimeSpan.FromSeconds(5));
+        
+        await VerifyCartHasProductPrice(referenceCartId, 2, 222.22M);
+        await Task.Delay(TimeSpan.FromSeconds(5));
+        
+        await CallUpdateProductPrice(2, 22.22M);
+        await Task.Delay(TimeSpan.FromSeconds(5));
+
+        await VerifyCartHasProductPrice(referenceCartId, 2, 22.22M);
     }
 
     [Fact]
@@ -48,53 +53,55 @@ public class TestScenario
         await GetCart(3);
 
 
-        await CallAddProduct(5000, "product1", 11.11M);
-        await CallAddProduct(5000, "product2", 22.22M);
-        await CallAddProduct(5000, "product3", 33.33M);
-        await CallAddProduct(2, "product4", 44.44M);
-        await CallAddProduct(3, "product2", 22.22M);
-        await CallAddProduct(3, "product5", 55.55M);
+        await CallAddProduct(5000, 1, 11.11M);
+        await CallAddProduct(5000, 2, 22.22M);
+        await CallAddProduct(5000, 3, 33.33M);
+        await CallAddProduct(2, 4, 44.44M);
+        await CallAddProduct(3, 2, 22.22M);
+        await CallAddProduct(3, 5, 55.55M);
 
-        await CallUpdateProductPrice("product2", 222.22M);
+        await CallUpdateProductPrice(2, 222.22M);
         await Task.Delay(TimeSpan.FromSeconds(5));
-        await VerifyCartHasProductPrice(5000, "product2", 222.22M);
+        
+        await VerifyCartHasProductPrice(5000, 2, 222.22M);
+        await Task.Delay(TimeSpan.FromSeconds(5));
 
-        await CallUpdateProductPrice("product2", 22.22M);
+        await CallUpdateProductPrice(2, 22.22M);
         await Task.Delay(TimeSpan.FromSeconds(5));
-        await VerifyCartHasProductPrice(5000, "product2", 22.22M);
+        await VerifyCartHasProductPrice(5000, 2, 22.22M);
     }
 
     [Fact]
     public async Task PriceUpdateCheck()
     {
-        await CallUpdateProductPrice("product2", 222.22M);
-        await VerifyCartHasProductPrice(1, "product2", 222.22M);
-        await VerifyCartHasProductPrice(3, "product2", 222.22M);
-        await CallUpdateProductPrice("product2", 22.22M);
-        await VerifyCartHasProductPrice(1, "product2", 22.22M);
-        await VerifyCartHasProductPrice(3, "product2", 22.22M);
+        await CallUpdateProductPrice(2, 222.22M);
+        await VerifyCartHasProductPrice(1, 2, 222.22M);
+        await VerifyCartHasProductPrice(3, 2, 222.22M);
+        await CallUpdateProductPrice(2, 22.22M);
+        await VerifyCartHasProductPrice(1, 2, 22.22M);
+        await VerifyCartHasProductPrice(3, 2, 22.22M);
     }
 
-    private async Task VerifyCartHasProductPrice(int cartId, string productName, decimal price)
+    private async Task VerifyCartHasProductPrice(int cartId, int productId, decimal price)
     {
         var cart = (await GetCart(cartId)).Details;
         cart.LineItems
-            .Find(li => li.ProductName == productName)!
+            .Find(li => li.ProductId == productId)!
             .Price.Should().Be(price);
     }
 
-    private async Task CallAddProduct(int cartId, string productName, decimal price)
+    private async Task CallAddProduct(int cartId, int productId, decimal price)
     {
         await _http.PostAsJsonAsync<object>($"/cart/{cartId}/add-product", new
         {
-            ProductName = productName,
+            ProductId = productId,
             Price = price
         });
     }
 
-    private async Task CallUpdateProductPrice(string productName, decimal price)
+    private async Task CallUpdateProductPrice(int productId, decimal price)
     {
-        await _http.PutAsJsonAsync<object>($"/product/{productName}", new
+        await _http.PutAsJsonAsync<object>($"/product/{productId}", new
         {
             Price = price
         });
@@ -112,5 +119,5 @@ public class TestScenario
     // ReSharper disable once ClassNeverInstantiated.Local
     private record CartDto(/*int CartId, */List<LineItemDto> LineItems);
     // ReSharper disable once ClassNeverInstantiated.Local
-    private record LineItemDto(string ProductName, decimal Price/*, int Quantity*/);
+    private record LineItemDto(int ProductId, decimal Price/*, int Quantity*/);
 }

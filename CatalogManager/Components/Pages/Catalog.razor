@@ -1,0 +1,37 @@
+@page "/Catalog"
+@using System.Net
+@using SharedMessages
+<h3>Catalog</h3>
+
+@inject CatalogApiClient Api
+
+@if (TopCategories?.Categories?.Any() ?? false)
+{
+    <ul>
+        @foreach (var category in TopCategories.Categories)
+        {
+            <li>
+                <NavLink class="nav-link" href="@BuildLinkToCategory(category.Name)">
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> @category.Name
+                </NavLink>
+            </li>
+        }
+    </ul>
+}
+
+
+@code {
+
+    private ProductManagerMessages.TopCategories TopCategories { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        TopCategories = await Api.GetTopCategories();
+    }
+    
+    private string BuildLinkToCategory(string categoryName)
+    {
+        return $"Category/{WebUtility.UrlEncode(categoryName)}";
+    }
+}

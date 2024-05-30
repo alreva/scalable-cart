@@ -32,7 +32,7 @@ public static class CartHttpService
                 [FromServices] IRequiredActor<CartManagerActor> mgr) =>
             {
                 var cart = await mgr.GetCart(id);
-                cart.Tell(new CartMessages.C.AddProduct(req.ProductName, req.Price));
+                cart.Tell(new CartMessages.C.AddProduct(req.ProductId, req.Price));
                 return Results.Ok();
             })
             .WithName("AddProductToCart")

@@ -10,7 +10,7 @@ export interface CartDetailsDto {
 }
 
 export interface LineItemDto {
-    productName: string;
+    productId: number;
     price: number;
     quantity: number;
 }

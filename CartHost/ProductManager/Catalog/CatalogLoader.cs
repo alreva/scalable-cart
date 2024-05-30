@@ -55,4 +55,9 @@ public class CatalogLoader
             .ToArray();
         return new(category, productsPage);
     }
+    
+    public ProductManagerMessages.CatalogItem GetProductDetails(int id)
+    {
+        return _catalog.First(item => item.Id == id);
+    }
 }

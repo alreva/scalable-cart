@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Pagination, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Pagination, Button, Badge } from "react-bootstrap";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useUser } from "@/app/components/userContext";
 import { url } from "inspector";
@@ -112,7 +112,7 @@ const CategoryPage = (
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            productName: id.toString(),
+            productId: id,
             price: product.price,
           }),
         });
@@ -135,7 +135,7 @@ const CategoryPage = (
             <Col key={product.id} className="mb-4" md={6}>
               <Card>
                 <Card.Body>
-                  <Card.Title>{product.name}</Card.Title>
+                  <Card.Title><Badge bg="info">{product.id}</Badge> {product.name}</Card.Title>
                   <Card.Text>{product.description}</Card.Text>
                   <Card.Text>Brand: {product.brand}</Card.Text>
                   <Card.Text>Price: ${product.price}</Card.Text>
