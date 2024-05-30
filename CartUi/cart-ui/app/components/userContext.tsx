@@ -117,6 +117,7 @@ const subscribeToNotifications = (
     .withUrl("http://localhost:5254/hubs/cart?cartId=" + cartId, {
       withCredentials: false,
     })
+    .withAutomaticReconnect([0, 2000, 10000, 30000])
     .configureLogging(LogLevel.Information)
     .build();
 
