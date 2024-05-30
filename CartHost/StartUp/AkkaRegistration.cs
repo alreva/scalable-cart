@@ -62,7 +62,9 @@ public static class AkkaRegistration
 
                     #endregion
 
-                    registry.Register<CartChangesNotificationActor>(system.ActorOf<CartChangesNotificationActor>());
+                    registry.Register<CartChangesNotificationActor>(
+                        system.ActorOf<CartChangesNotificationActor>("cart-changes-notifier")
+                    );
                     registry.Register<CartManagerActor>(system.ActorOf<CartManagerActor>("cart-manager"));
                     var catalogLoader = new CatalogLoader(productConfig.CatalogJsonPath);
                     var productManagerActorProps = Props.Create(() => new ProductManagerActor(catalogLoader));
