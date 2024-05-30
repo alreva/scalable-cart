@@ -11,10 +11,10 @@ export const pagerSize = 10;
 const CategoryPage = (
   { params }: { params: { id: string } },
 ) => {
-  const [data, setData] = useState<{category: {name: string}; products: ProductDto[]; total: number }>({
+  const [data, setData] = useState<{category: {name: string}; products: ProductDto[]; totalProducts: number }>({
     category: {name: ""},
     products: [],
-    total: 0,
+    totalProducts: 0,
   });
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -24,7 +24,7 @@ const CategoryPage = (
   const page = parseInt(searchParams.get("page") || "1");
   const skip = (page - 1) * pageSize;
 
-  const { category, products, total } = data;
+  const { category, products, totalProducts } = data;
   const { name: categoryName } = category;
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const CategoryPage = (
         const data = (await response.json()) as {
           category: { name: string };
           products: ProductDto[];
-          total: number;
+          totalProducts: number;
         };
         setData(data);
       } catch (error) {
@@ -47,7 +47,7 @@ const CategoryPage = (
     fetchData();
   }, [skip]);
 
-  const totalPages = Math.ceil(total / pageSize);
+  const totalPages = Math.ceil(totalProducts / pageSize);
   const pns = [];
   const isAuthenticated = !!user;
   const cartId = isAuthenticated ? user.id : null;

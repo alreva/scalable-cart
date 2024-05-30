@@ -10,7 +10,7 @@ public class CatalogLoader
 
     private readonly ConcurrentDictionary<
         ProductManagerMessages.Category,
-        IEnumerable<ProductManagerMessages.CatalogItem>
+        CategoryProducts
     > _categoryProductsCache = new();
     
     private readonly JsonSerializerOptions _options = new JsonSerializerOptions
@@ -45,19 +45,29 @@ public class CatalogLoader
         ProductManagerMessages.Category category,
         Paging paging = default)
     {
-        var allCategoryProducts = _categoryProductsCache.GetOrAdd(category, _catalog
-            .Where(item => item.Category == category.Name)
-            .OrderBy(item => item.Name));
+        var allCategoryProducts = _categoryProductsCache.GetOrAdd(category, GetCategoryProductsFromCatlog(category));
         
         var productsPage = allCategoryProducts
+            .Products
             .Skip(paging.Skip)
             .Take(paging.Take)
             .ToArray();
-        return new(category, productsPage);
+        return new(category, productsPage, allCategoryProducts.TotalProducts);
     }
-    
+
+    private CategoryProducts GetCategoryProductsFromCatlog(ProductManagerMessages.Category category)
+    {
+        var allProducts = _catalog
+            .Where(item => item.Category == category.Name)
+            .OrderBy(item => item.Name);
+        var totalProducts = allProducts.Count();
+        return new CategoryProducts(allProducts, totalProducts);
+    }
+
     public ProductManagerMessages.CatalogItem GetProductDetails(int id)
     {
         return _catalog.First(item => item.Id == id);
     }
+    
+    private record CategoryProducts(IEnumerable<ProductManagerMessages.CatalogItem> Products, int TotalProducts);
 }

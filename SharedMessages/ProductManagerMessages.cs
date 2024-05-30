@@ -22,7 +22,7 @@ public static class ProductManagerMessages
     }
     
     public record TopCategories(Category[] Categories);
-    public record CategoryProducts(Category Category, CatalogItem[] Products);
+    public record CategoryProducts(Category Category, CatalogItem[] Products, int TotalProducts);
     public record Category(string Name);
     
     public class CatalogItem(
