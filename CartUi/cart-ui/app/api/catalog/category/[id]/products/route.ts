@@ -20,7 +20,9 @@ export async function GET(
     baseUrl.searchParams.append("take", take.toString());
   }
   console.log("baseUrl:", baseUrl.toString());
-  const response = await fetch(baseUrl.toString());
+  const response = await fetch(baseUrl.toString(), {
+    cache: 'no-store',
+  });
   const data = await response.json();
   console.log("data:", data);
   return NextResponse.json(data);
