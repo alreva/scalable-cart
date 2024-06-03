@@ -9,6 +9,7 @@ import React, {
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { CartDetailsDto, CartResponseDto } from "./cartDto";
 import { usePathname } from "next/navigation";
+import { API_URL } from "../env";
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({
   children,
@@ -114,7 +115,7 @@ const subscribeToNotifications = (
   detailsHandler: (details: CartDetailsDto) => void
 ) => {
   const connection = new HubConnectionBuilder()
-    .withUrl("http://localhost:5254/hubs/cart?cartId=" + cartId, {
+    .withUrl(`${API_URL}/hubs/cart?cartId=${cartId}`, {
       withCredentials: false,
     })
     .withAutomaticReconnect([0, 2000, 10000, 30000])

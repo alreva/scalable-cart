@@ -25,6 +25,7 @@ public static class ProductManagerMessages
     public record CategoryProducts(Category Category, CatalogItem[] Products, int TotalProducts);
     public record Category(string Name);
     
+    [GenerateSerializer]
     public class CatalogItem(
         int id,
         string name,

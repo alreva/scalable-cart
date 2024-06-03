@@ -1,3 +1,4 @@
+import { API_URL } from "@/app/env";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -6,7 +7,7 @@ export async function GET(
 ) {
   try {
     const response = await fetch(
-      "http://localhost:5254/catalog/top-categories"
+      `${API_URL}/catalog/top-categories`
     );
     const data = await response.json();
     return NextResponse.json(data);

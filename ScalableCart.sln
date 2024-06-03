@@ -15,6 +15,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartHost.Tests", "CartHost.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogManager", "CatalogManager\CatalogManager.csproj", "{2639FE44-E6A8-4BD9-A3C7-D426AC5FEB19}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartHost.Orleans", "CartHost.Orleans\CartHost.Orleans.csproj", "{1730DCC7-2C56-4B10-B27D-FC04086E7DC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartHost.Orleans.Client", "CartHost.Orleans.Client\CartHost.Orleans.Client.csproj", "{744AECBC-9AE7-4D11-9FEE-2CC953A710CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartHost.Orleans.Grains", "CartHost.Orleans.Grains\CartHost.Orleans.Grains.csproj", "{451F1C74-25AA-4105-AF8E-551C5067422A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +54,17 @@ Global
 		{2639FE44-E6A8-4BD9-A3C7-D426AC5FEB19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2639FE44-E6A8-4BD9-A3C7-D426AC5FEB19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2639FE44-E6A8-4BD9-A3C7-D426AC5FEB19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1730DCC7-2C56-4B10-B27D-FC04086E7DC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1730DCC7-2C56-4B10-B27D-FC04086E7DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1730DCC7-2C56-4B10-B27D-FC04086E7DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1730DCC7-2C56-4B10-B27D-FC04086E7DC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{744AECBC-9AE7-4D11-9FEE-2CC953A710CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{744AECBC-9AE7-4D11-9FEE-2CC953A710CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{744AECBC-9AE7-4D11-9FEE-2CC953A710CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{744AECBC-9AE7-4D11-9FEE-2CC953A710CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{451F1C74-25AA-4105-AF8E-551C5067422A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{451F1C74-25AA-4105-AF8E-551C5067422A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{451F1C74-25AA-4105-AF8E-551C5067422A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{451F1C74-25AA-4105-AF8E-551C5067422A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

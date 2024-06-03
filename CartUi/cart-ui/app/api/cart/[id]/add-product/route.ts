@@ -1,3 +1,4 @@
+import { API_URL } from "@/app/env";
 import { NextResponse } from "next/server";
 
 export async function POST(
@@ -7,7 +8,7 @@ export async function POST(
   const { id } = params;
   const productModel = await req.json();
   const res = await fetch(
-    `http://localhost:5254/cart/${id}/add-product`, {
+    `${API_URL}/cart/${id}/add-product`, {
     headers: {
       'Content-Type': 'application/json',
     },

@@ -1,3 +1,4 @@
+import { API_URL } from "@/app/env";
 import { NextRequest, NextResponse } from "next/server";
 import internal from "stream";
 
@@ -11,7 +12,7 @@ export async function GET(
   const skip = parseInt(searchParams.get("skip") || "0");
   const take = parseInt(searchParams.get("take") || "8");
   let baseUrl = new URL(
-    `http://localhost:5254/catalog/category/${id}/products`
+    `${API_URL}/catalog/category/${id}/products`
   );
   if (skip) {
     baseUrl.searchParams.append("skip", skip.toString());

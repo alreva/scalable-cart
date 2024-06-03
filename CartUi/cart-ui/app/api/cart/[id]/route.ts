@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { CartResponseDto } from "../../../components/cartDto";
+import { API_URL } from "@/app/env";
 
 
 export async function GET(
@@ -7,7 +8,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const res = await fetch('http://localhost:5254/cart/' + id, {
+  const res = await fetch(`${API_URL}/cart/` + id, {
     cache: 'no-store',
   });
 
