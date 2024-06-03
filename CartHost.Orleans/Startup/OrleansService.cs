@@ -1,7 +1,6 @@
-using CartHost.Orleans.Grains;
 using Orleans.Configuration;
 
-namespace CartHost.Orleans;
+namespace CartHost.Orleans.Startup;
 
 public static class OrleansService
 {

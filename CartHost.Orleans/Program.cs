@@ -2,6 +2,7 @@ using CartHost.Orleans;
 using CartHost.Orleans.Cart;
 using CartHost.Orleans.Hello;
 using CartHost.Orleans.ProductManager;
+using CartHost.Orleans.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
 

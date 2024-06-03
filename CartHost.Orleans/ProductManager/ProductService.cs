@@ -11,13 +11,15 @@ public static class ProductService
 {
     public static void AddProducts(this WebApplicationBuilder builder)
     {
-        var catalogPath = builder.Configuration.GetConnectionString("CatalogManager")!;
-        var catalogLoader = new CatalogLoader(catalogPath);
-        builder.Services.AddSingleton<ICatalogLoader>(catalogLoader);
+        builder.Services.AddSingleton<CatalogPathProvider>();
+        builder.Services.AddSingleton<ICatalogLoader, CatalogLoader>();
     }
     
     public static void MapProducts(this WebApplication app)
     {
+        // warmup:
+        app.Services.GetRequiredService<ICatalogLoader>();
+        
         app.MapGet(
             "/catalog/top-categories", (
                 HttpContext ctx,

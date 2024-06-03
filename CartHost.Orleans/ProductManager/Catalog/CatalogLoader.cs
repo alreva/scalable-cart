@@ -13,7 +13,7 @@ public class CatalogLoader : ICatalogLoader
         ProductManagerMessages.Category,
         CategoryProducts
     > _categoryProductsCache = new();
-    
+
     private readonly JsonSerializerOptions _options = new JsonSerializerOptions
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
@@ -21,15 +21,42 @@ public class CatalogLoader : ICatalogLoader
 
     public ProductManagerMessages.TopCategories TopCategories { get; }
 
-    public CatalogLoader(string jsonFilePath)
+    public CatalogLoader(
+        CatalogPathProvider catalogPathProvider,
+        ILogger<CatalogLoader> log
+    )
     {
-        var jsonStream = File.OpenRead(jsonFilePath);
-
-        // Deserialize the JSON data into a list of CatalogItem objects
-        _catalog = JsonSerializer.Deserialize<ProductManagerMessages.CatalogItem[]>(jsonStream, _options)!;
-        TopCategories = GetTopCategories();
+        try
+        {
+            var jsonStream = File.OpenRead(catalogPathProvider.CatalogPath);
+            _catalog = JsonSerializer.Deserialize<ProductManagerMessages.CatalogItem[]>(jsonStream, _options)!;
+            TopCategories = GetTopCategories();
+        }
+        catch (FileNotFoundException e)
+        {
+            var absolutePath = Path.GetFullPath(catalogPathProvider.CatalogPath);
+            var exceptionMessage
+                = $"""
+                   Could not find catalog file at {absolutePath}.
+                   Please check that the file exists.
+                   If it does not, please download if from OneDrive here:
+                   https://1drv.ms/u/s!AvI-lJAeKrg-gZ0mD-LkhjDPUXatjA?e=QTbs5W
+                   Then unzip it and put in onto the path specified in the configuration.
+                   """;
+            log.LogError(
+                e,
+                """
+                Could not find catalog file at {CatalogPath}.
+                Please check that the file exists.
+                If it does not, please download if from OneDrive here:
+                https://1drv.ms/u/s!AvI-lJAeKrg-gZ0mD-LkhjDPUXatjA?e=QTbs5W
+                Then unzip it and put in onto the path specified in the configuration.
+                """,
+                absolutePath);
+            throw new FileNotFoundException(exceptionMessage, e);
+        }
     }
-    
+
     private ProductManagerMessages.TopCategories GetTopCategories()
     {
         // Extract all unique categories
@@ -41,13 +68,13 @@ public class CatalogLoader : ICatalogLoader
 
         return new ProductManagerMessages.TopCategories(categories);
     }
-    
+
     public ProductManagerMessages.CategoryProducts GetCategoryProducts(
         ProductManagerMessages.Category category,
         Paging paging = default)
     {
         var allCategoryProducts = _categoryProductsCache.GetOrAdd(category, GetCategoryProductsFromCatlog(category));
-        
+
         var productsPage = allCategoryProducts
             .Products
             .Skip(paging.Skip)
@@ -69,6 +96,11 @@ public class CatalogLoader : ICatalogLoader
     {
         return _catalog.First(item => item.Id == id);
     }
-    
+
     private record CategoryProducts(IEnumerable<ProductManagerMessages.CatalogItem> Products, int TotalProducts);
+}
+
+public class CatalogPathProvider(IConfiguration config)
+{
+    public string CatalogPath { get; set; } = config.GetConnectionString("CatalogManager")!;
 }
