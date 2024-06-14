@@ -19,25 +19,28 @@ app.AddCommand(
     Console.WriteLine($"Managing cart {cartId}");
     var cart = system.ActorSelection(
         builder.Configuration.GetConnectionString("AkkaCartActorPathPrefix") + cartId);
-    var cartDetails = await cart.Ask<CartDetails>(GetCartDetails.Instance);
+    var cartDetails = await cart.Ask<CartMessages.CartDetails>(CartMessages.Q.GetCartDetails.Instance);
     Console.WriteLine("Cart details:");
     Console.WriteLine($"Cart ID: {cartDetails.CartId}");
     Console.WriteLine($"Total price: {cartDetails.TotalPrice}");
     Console.WriteLine("Line items:");
     foreach (var item in cartDetails.LineItems)
     {
-        Console.WriteLine($"- {item.ProductName} ({item.Price} x {item.Quantity} = {item.Price * item.Quantity})");
+        Console.WriteLine($"- {item.ProductId} ({item.Price} x {item.Quantity} = {item.Price * item.Quantity})");
     }
 });
 
 app.AddCommand(
-    "product-price",
-    async (string productName, decimal price) =>
+    "product-price", (
+        int productId,
+        decimal price
+    ) =>
     {
         using var system = CreateActorSystem();
-        Console.WriteLine($"Updating price of product {productName} to {price}");
+        Console.WriteLine($"Updating price of product {productId} to {price}");
         var publisher = system.ActorSelection(builder.Configuration.GetConnectionString("AkkaPublisherPath"));
-        publisher.Tell(new ProductPriceUpdated(productName, price));
+        publisher.Tell(new IntegrationMessages.E.ProductPriceUpdated(productId, price));
+        return Task.CompletedTask;
     }
 );
 

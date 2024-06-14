@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Pagination, Button, Badge } from "react-bootstrap";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useUser } from "@/app/components/userContext";
-import { url } from "inspector";
 
 export const pageSize = 8;
 export const pagerSize = 10;

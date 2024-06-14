@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cart", "Cart\Cart.csproj", "{0D5F78AC-4647-4C19-8065-07A8714AD36D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli", "Cli\Cli.csproj", "{C2701447-AB84-4F45-8770-861F83B60D46}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedMessages", "SharedMessages\SharedMessages.csproj", "{2AF947D3-7E6D-4BB8-B195-F11751B32B1B}"
@@ -17,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogManager", "CatalogMa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartHost.Orleans", "CartHost.Orleans\CartHost.Orleans.csproj", "{1730DCC7-2C56-4B10-B27D-FC04086E7DC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartHost.Orleans.Client", "CartHost.Orleans.Client\CartHost.Orleans.Client.csproj", "{744AECBC-9AE7-4D11-9FEE-2CC953A710CD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartHost.Orleans.Grains", "CartHost.Orleans.Grains\CartHost.Orleans.Grains.csproj", "{451F1C74-25AA-4105-AF8E-551C5067422A}"
 EndProject
 Global
@@ -30,10 +26,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0D5F78AC-4647-4C19-8065-07A8714AD36D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D5F78AC-4647-4C19-8065-07A8714AD36D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D5F78AC-4647-4C19-8065-07A8714AD36D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D5F78AC-4647-4C19-8065-07A8714AD36D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C2701447-AB84-4F45-8770-861F83B60D46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C2701447-AB84-4F45-8770-861F83B60D46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2701447-AB84-4F45-8770-861F83B60D46}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -58,10 +50,6 @@ Global
 		{1730DCC7-2C56-4B10-B27D-FC04086E7DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1730DCC7-2C56-4B10-B27D-FC04086E7DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1730DCC7-2C56-4B10-B27D-FC04086E7DC3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{744AECBC-9AE7-4D11-9FEE-2CC953A710CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{744AECBC-9AE7-4D11-9FEE-2CC953A710CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{744AECBC-9AE7-4D11-9FEE-2CC953A710CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{744AECBC-9AE7-4D11-9FEE-2CC953A710CD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{451F1C74-25AA-4105-AF8E-551C5067422A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{451F1C74-25AA-4105-AF8E-551C5067422A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{451F1C74-25AA-4105-AF8E-551C5067422A}.Release|Any CPU.ActiveCfg = Release|Any CPU
