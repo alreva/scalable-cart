@@ -23,7 +23,7 @@ public static class CartService
             })
             .WithName("GetCartById");
 
-        app.MapPost("/cart/{id:int}/add-product", async (
+        app.MapPost("/cart/{id:int}/products", async (
                 HttpContext ctx,
                 int id,
                 [FromBody] AddProductToCartRequest req,

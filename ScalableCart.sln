@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartHost.Orleans", "CartHos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartHost.Orleans.Grains", "CartHost.Orleans.Grains\CartHost.Orleans.Grains.csproj", "{451F1C74-25AA-4105-AF8E-551C5067422A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartHost.Marten", "CartHost.Marten\CartHost.Marten.csproj", "{BE00209B-4CD6-4ADD-8399-0290DF01FEB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartHost.Marten.Domain", "CartHost.Marten.Domain\CartHost.Marten.Domain.csproj", "{F6A3EF3A-F2F3-48E4-8305-B5DD9837390D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +58,13 @@ Global
 		{451F1C74-25AA-4105-AF8E-551C5067422A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{451F1C74-25AA-4105-AF8E-551C5067422A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{451F1C74-25AA-4105-AF8E-551C5067422A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE00209B-4CD6-4ADD-8399-0290DF01FEB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE00209B-4CD6-4ADD-8399-0290DF01FEB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE00209B-4CD6-4ADD-8399-0290DF01FEB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE00209B-4CD6-4ADD-8399-0290DF01FEB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6A3EF3A-F2F3-48E4-8305-B5DD9837390D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6A3EF3A-F2F3-48E4-8305-B5DD9837390D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6A3EF3A-F2F3-48E4-8305-B5DD9837390D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6A3EF3A-F2F3-48E4-8305-B5DD9837390D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -92,7 +92,7 @@ public class TestScenario
 
     private async Task CallAddProduct(int cartId, int productId, decimal price)
     {
-        await _http.PostAsJsonAsync<object>($"/cart/{cartId}/add-product", new
+        await _http.PostAsJsonAsync<object>($"/cart/{cartId}/products", new
         {
             ProductId = productId,
             Price = price

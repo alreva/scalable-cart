@@ -25,7 +25,7 @@ public static class CartHttpService
             .WithName("GetCartById")
             .WithOpenApi();
 
-        app.MapPost("/cart/{id:int}/add-product", async (
+        app.MapPost("/cart/{id:int}/products", async (
                 HttpContext ctx,
                 int id,
                 [FromBody] AddProductToCartRequest req,

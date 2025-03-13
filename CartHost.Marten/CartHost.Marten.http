@@ -1,0 +1,6 @@
+@CartHost.Marten_HostAddress = http://localhost:5212
+
+GET {{CartHost.Marten_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
