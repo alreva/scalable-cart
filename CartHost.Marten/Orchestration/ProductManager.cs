@@ -1,6 +1,7 @@
 using Marten;
 using ProductPrice = (int ProductId, decimal Price);
 using ProductInCart = (int ProductId, string CartId);
+using CartClientId = (string CartId, string ClientId);
 
 namespace CartHost.Marten.Orchestration;
 
@@ -38,21 +39,16 @@ public class ProductManager(
     private async Task SendNotifications(params string[] cartIds)
     {
         var clientIds = await cartRegistry.GetClientIdsForCarts(cartIds);
-        List<Task> notificationTasks = [];
-        foreach (var (cartId, clientId) in clientIds)
-        {
-            notificationTasks.Add(ProcessCart());
-            continue;
-
-            async Task ProcessCart()
-            {
-                var cart = await querySession.Events.AggregateStreamAsync<Domain.Cart.Cart>(cartId);
-                if (cart is not null)
-                {
-                    await cartNotifier.SendNotification(clientId, cart.GetDetails());
-                }
-            }
-        }
+        var notificationTasks = clientIds.Select(SendNotificationForCart);
         await Task.WhenAll(notificationTasks);
+    }
+
+    private async Task SendNotificationForCart(CartClientId cartClientId)
+    {
+        var cart = await querySession.Events.AggregateStreamAsync<Domain.Cart.Cart>(cartClientId.CartId);
+        if (cart is not null)
+        {
+            await cartNotifier.SendNotification(cartClientId.ClientId, cart.GetDetails());
+        }
     }
 }
