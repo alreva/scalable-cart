@@ -30,6 +30,54 @@ npm install
 npm run dev
 ```
 
+## Running the sample
+
+The cart relies on a PostgreSQL database and several services. The following
+steps bring up a local development environment:
+
+1. **Start PostgreSQL** using the provided compose file:
+
+   ```bash
+   docker compose -f CartHost.Marten/Startup/docker-compose.yml up -d
+   ```
+
+2. **Launch the Marten host** which exposes the cart API on
+   `http://localhost:5254`:
+
+   ```bash
+   dotnet run --project CartHost.Marten
+   ```
+
+3. **Run the Next.js UI** from the `CartUi/cart-ui` folder. The site listens on
+   `http://localhost:3000`:
+
+   ```bash
+   cd CartUi/cart-ui
+   npm install
+   npm run dev
+   ```
+
+4. **Start the CatalogManager** mobile app (requires the MAUI workload):
+
+   ```bash
+   dotnet workload install maui   # first time only
+   dotnet run --project CatalogManager
+   ```
+
+With all services running you can browse the cart at `http://localhost:3000` and
+use the CatalogManager to maintain product information.
+
+## Automating startup
+
+The repository contains a helper script `run-all.sh` that starts PostgreSQL,
+CartHost.Marten, the UI and the CatalogManager in one go. Execute:
+
+```bash
+./run-all.sh
+```
+
+Logs for each component are written to the `logs/` directory.
+
 ## Repository Layout
 
 ```
