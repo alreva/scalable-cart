@@ -39,7 +39,7 @@ popd >/dev/null
 echo "Cart UI running with PID ${UI_PID} at http://localhost:3000"
 
 # Start CatalogManager MAUI app
-dotnet run --project CatalogManager > logs/catalogmanager.log 2>&1 &
+dotnet run --framework net8.0-maccatalyst --project CatalogManager > logs/catalogmanager.log 2>&1 &
 CAT_PID=$!
 
 echo "CatalogManager running with PID ${CAT_PID}"
