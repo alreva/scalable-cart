@@ -26,5 +26,5 @@ public class CartHub(IRequiredActor<CartChangesNotificationActor> mgr) : Hub
 
 public static class HubContext
 {
-    public static IHubContext<CartHub> Cart { get; set; }
+    public static IHubContext<CartHub>? Cart { get; set; }
 }

@@ -21,7 +21,7 @@ public class CartChangesNotificationActor : ReceiveActor
 
         Receive<CartChangesMessages.ClientCartConnected>(Apply);
         Receive<CartChangesMessages.ClientCartDisconnected>(Apply);
-        Receive<IntegrationMessages.E.CartChanged>(Apply);
+        ReceiveAsync<IntegrationMessages.E.CartChanged>(Apply);
     }
 
     private void Apply(CartChangesMessages.ClientCartConnected evt)
@@ -56,7 +56,7 @@ public class CartChangesNotificationActor : ReceiveActor
         _connectionCarts.TryRemove(connectionId, out var _);
     }
 
-    private async void Apply(IntegrationMessages.E.CartChanged evt)
+    private async Task Apply(IntegrationMessages.E.CartChanged evt)
     {
         Logger.Info("CartChangesNotificationActor: Cart {0} changed", evt.CartId);
         var cartId = evt.CartId;

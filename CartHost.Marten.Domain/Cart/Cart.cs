@@ -2,7 +2,7 @@ namespace CartHost.Marten.Domain.Cart;
 
 public class Cart
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = "";
     
     public List<M.LineItem> LineItems { get; set; } = new();
 

@@ -50,13 +50,14 @@ public static class ProductHttpService
             .WithOpenApi();
         
         
-        app.MapPut("/product/{id:int}", async (
+        app.MapPut("/product/{id:int}", (
                 HttpContext ctx,
                 int id,
                 [FromBody] ProductUpdateRequest req,
                 [FromServices] IRequiredActor<ProductManagerActor> mgr) =>
             {
                 mgr.ActorRef.Tell(new ProductManagerMessages.C.UpdateProductPrice(id, req.Price));
+                return Task.CompletedTask;
             })
             .WithName("UpdateProduct")
             .WithOpenApi();

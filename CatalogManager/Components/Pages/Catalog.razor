@@ -22,7 +22,7 @@
 
 @code {
 
-    private ProductManagerMessages.TopCategories TopCategories { get; set; }
+    private ProductManagerMessages.TopCategories TopCategories { get; set; } = new ProductManagerMessages.TopCategories([]);
     
     protected override async Task OnInitializedAsync()
     {

@@ -8,7 +8,7 @@ public static class DocumentStoreExtensions
         IDocumentStore store,
         IQuerySession querySession,
         string id,
-        params IEnumerable<object> events) where T : class
+        params object[] events) where T : class
     {
         var aggregate = await querySession.Events.AggregateStreamAsync<T>(id);
         if (aggregate is null)

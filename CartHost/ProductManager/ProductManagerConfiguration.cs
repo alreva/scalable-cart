@@ -2,5 +2,5 @@ namespace CartHost.ProductManager;
 
 public class ProductManagerConfiguration
 {
-    public string CatalogJsonPath { get; set; }
+    public string CatalogJsonPath { get; set; } = "";
 }

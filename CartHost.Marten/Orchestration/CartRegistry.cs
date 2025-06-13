@@ -48,7 +48,7 @@ public class CartRegistry (
         return result.ToArray();
     }
 
-    public async Task<IEnumerable<CartClientId>> GetClientIdsForCarts(params IEnumerable<string> cartIds)
+    public async Task<IEnumerable<CartClientId>> GetClientIdsForCarts(params string[] cartIds)
     {
         var allEvents = await querySession.Events.FetchStreamAsync(Id);
         
