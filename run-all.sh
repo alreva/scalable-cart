@@ -24,23 +24,22 @@ else
 fi
 
 # Start CartHost.Marten
-(dotnet run --project CartHost.Marten > logs/carthost.log 2>&1 &)
+dotnet run --project CartHost.Marten > logs/carthost.log 2>&1 &
 CART_HOST_PID=$!
 
 echo "CartHost.Marten running with PID ${CART_HOST_PID}" 
 
 # Start Cart UI
-(
-  cd CartUi/cart-ui
-  npm install
-  npm run dev > ../../logs/cartui.log 2>&1 &
-)
+pushd CartUi/cart-ui >/dev/null
+npm install
+npm run dev > ../../logs/cartui.log 2>&1 &
 UI_PID=$!
+popd >/dev/null
 
-echo "Cart UI running with PID ${UI_PID}" 
+echo "Cart UI running with PID ${UI_PID} at http://localhost:3000"
 
 # Start CatalogManager MAUI app
-(dotnet run --project CatalogManager > logs/catalogmanager.log 2>&1 &)
+dotnet run --project CatalogManager > logs/catalogmanager.log 2>&1 &
 CAT_PID=$!
 
 echo "CatalogManager running with PID ${CAT_PID}"
