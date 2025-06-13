@@ -61,7 +61,7 @@ steps bring up a local development environment:
 
    ```bash
    dotnet workload install maui   # first time only
-   dotnet run --project CatalogManager
+   dotnet run --framework net8.0-maccatalyst --project CatalogManager
    ```
 
 With all services running you can browse the cart at `http://localhost:3000` and
